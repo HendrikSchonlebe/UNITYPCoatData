@@ -497,6 +497,7 @@ namespace UNITYPCoatData
         public Double PaintPriceGroupSetupFeeThreshold { get; set; } = 0;
         public Double PaintPriceGroupSetupFee { get; set; } = 0;
         public Int32 PaintPriceGroupMinutesPerBag { get; set; } = 0;
+        public Boolean PaintPriceGroupChargePaintSeperately { get; set; } = false;
         public String PaintPriceGroupLastUpdate { get; set; } = string.Empty;
         public DataTable PaintPriceGroupRecord { get; set; } = new DataTable();
         public DataTable PaintPriceGroupRecords { get; set; } = new DataTable();
@@ -516,7 +517,8 @@ namespace UNITYPCoatData
                 StrSQL += "PaintPriceGroupSetupFeeThreshold float, ";
                 StrSQL += "PaintPriceGroupSetupFee float, ";
                 StrSQL += "PaintPriceGroupMinutesPerBag bigint, ";
-                StrSQL += "PaintFinishLastUpdated nvarchar(50))";
+                StrSQL += "PaintPriceGroupChargePaintSeperately bit, ";
+                StrSQL += "PaintPriceGroupLastUpdated nvarchar(50))";
 
                 SqlCommand cmdCreate = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
                 cmdCreate.CommandTimeout = 1000000;
@@ -545,19 +547,21 @@ namespace UNITYPCoatData
                 StrSQL += "PaintPriceGroupSetupFeeThreshold, ";
                 StrSQL += "PaintPriceGroupSetupFee, ";
                 StrSQL += "PaintPriceGroupMinutesPerBag, ";
-                StrSQL += "PaintFinishLastUpdated) VALUES (";
+                StrSQL += "PaintPriceGroupChargePaintSeperately, ";
+                StrSQL += "PaintPriceGroupLastUpdated) VALUES (";
                 StrSQL += "'" + Fix_Hyphon(PaintPriceGroupCode) + "', ";
                 StrSQL += "'" + Fix_Hyphon(PaintPriceGroupDescription) + "', ";
                 StrSQL += PaintPriceGroupMinimumProductionCharge.ToString("N2") + ", ";
                 StrSQL += PaintPriceGroupSetupFeeThreshold.ToString("N2") + ", ";
                 StrSQL += PaintPriceGroupSetupFee.ToString("N2") + ", ";
                 StrSQL += PaintPriceGroupMinutesPerBag.ToString("N0") + ", ";
+                StrSQL += "'" + PaintPriceGroupChargePaintSeperately.ToString() + "', ";
                 StrSQL += "'" + Fix_Hyphon(DateTime.Now.ToString()) + "')";
                 SqlCommand cmdInsert = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
                 if (cmdInsert.ExecuteNonQuery() != 1)
                 {
                     isSuccessful = false;
-                    ErrorMessage = "Insert Paint Finish - " + INSERT_ERROR;
+                    ErrorMessage = "Insert Paint Price Group - " + INSERT_ERROR;
                 }
 
             }
@@ -644,13 +648,109 @@ namespace UNITYPCoatData
             try
             {
                 PaintPriceGroupId = Convert.ToInt32(PaintPriceGroupRecord.Rows[0]["PaintPriceGroupId"]);
-
+                PaintPriceGroupCode = PaintPriceGroupRecord.Rows[0]["PaintPriceGroupCode"].ToString();
                 PaintPriceGroupDescription = PaintPriceGroupRecord.Rows[0]["PaintPriceGroupDescription"].ToString();
+                PaintPriceGroupMinimumProductionCharge = Convert.ToDouble(PaintPriceGroupRecord.Rows[0]["PaintPriceGroupMinimumCharge"]);
+                PaintPriceGroupSetupFeeThreshold = Convert.ToDouble(PaintPriceGroupRecord.Rows[0]["PaintPriceGroupSetUpFeeThreshold"]);
+                PaintPriceGroupSetupFee = Convert.ToDouble(PaintPriceGroupRecord.Rows[0]["PaintPriceGroupSetUpFee"]);
+                PaintPriceGroupMinutesPerBag = Convert.ToInt32(PaintPriceGroupRecord.Rows[0]["PaintPriceGroupMinutesPerBag"]);
+                PaintPriceGroupChargePaintSeperately = Convert.ToBoolean(PaintPriceGroupRecord.Rows[0]["PaintPriceGroupChargePaintSeperately"]);
+                PaintPriceGroupLastUpdate = PaintPriceGroupRecord.Rows[0]["PaintPriceGroupLastUpdate"].ToString();
             }
             catch (Exception ex)
             {
                 isSuccessful = false;
                 ErrorMessage = "Gather Paint Price Group - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Update_Paint_PriceGroup(Int32 PGId, SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+            Boolean hasChanged = false;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                String StrSQL = "UPDATE PaintPriceGroups SET ";
+                if (PaintPriceGroupCode != PaintPriceGroupRecord.Rows[0]["PaintPriceGroupCode"].ToString())
+                {
+                    StrSQL += "PaintPriceGroupCode = '" + Fix_Hyphon(PaintPriceGroupCode) + "', ";
+                    hasChanged = true;
+                }
+                if (PaintPriceGroupDescription != PaintPriceGroupRecord.Rows[0]["PaintPriceGroupDescription"].ToString())
+                {
+                    StrSQL += "PaintPriceGroupDescription = '" + Fix_Hyphon(PaintPriceGroupDescription) + "', ";
+                    hasChanged = true;
+                }
+                if (PaintPriceGroupMinimumProductionCharge != Convert.ToDouble(PaintPriceGroupRecord.Rows[0]["PaintPriceGroupMinimumCharges"]))
+                {
+                    StrSQL += "PaintPriceGroupMinimumCharges = " + PaintPriceGroupMinimumProductionCharge.ToString("N2") + ", ";
+                    hasChanged = true;
+                }
+                if (PaintPriceGroupSetupFeeThreshold != Convert.ToDouble(PaintPriceGroupRecord.Rows[0]["PaintPriceGroupSetupFeeThreshold"]))
+                {
+                    StrSQL += "PaintPriceGroupSetupFeeThreshold = " + PaintPriceGroupSetupFeeThreshold.ToString("N2") + ", ";
+                    hasChanged = true;
+                }
+                if (PaintPriceGroupSetupFee != Convert.ToDouble(PaintPriceGroupRecord.Rows[0]["PaintPriceGroupSetupFee"]))
+                {
+                    StrSQL += "PaintPriceGroupSetupFee = " + PaintPriceGroupSetupFee.ToString("N2") + ", ";
+                    hasChanged = true;
+                }
+                if (PaintPriceGroupMinutesPerBag != Convert.ToInt32(PaintPriceGroupRecord.Rows[0]["PaintPriceGroupMinutesPerBag"]))
+                {
+                    StrSQL += "PaintPriceGroupMinutesPerBag = " + PaintPriceGroupMinutesPerBag.ToString("N0") + ", ";
+                    hasChanged = true;
+                }
+                if (PaintPriceGroupChargePaintSeperately != Convert.ToBoolean(PaintPriceGroupRecord.Rows[0]["PaintPriceGroupChargePaintSeperately"]))
+                {
+                    StrSQL += "PaintPriceGroupChargePaintSeperately = '" + PaintPriceGroupChargePaintSeperately.ToString() + "', ";
+                    hasChanged = true;
+                }
+
+                if (hasChanged == true)
+                {
+                    StrSQL += "PaintPriceGroupLastUpdated = '" + Fix_Hyphon(DateTime.Now.ToString()) + "' WHERE PaintPriceGroupId = " + PGId.ToString();
+                    SqlCommand cmdUpdate = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                    if (cmdUpdate.ExecuteNonQuery() != 1)
+                    {
+                        isSuccessful = false;
+                        ErrorMessage = "Update Paint Price Group - " + UPDATE_ERROR;
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Update Paint Price Group - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Delete_Paint_PriceGroup(Int32 GroupId, SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                String StrSQL = "DELETE FROM PaintPriceGroups WHERE PaintPriceGroupId = " + GroupId.ToString();
+                SqlCommand cmdDelete = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                if (cmdDelete.ExecuteNonQuery() != 1)
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Delete Paint Price Group - " + DELETE_ERROR;
+                }
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Delete Paint PriceGroup - " + ex.Message + " !";
             }
 
             return isSuccessful;

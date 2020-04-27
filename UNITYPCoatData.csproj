@@ -2,6 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyVersion>1.0.0.1</AssemblyVersion>
+    <FileVersion>1.0.0.1</FileVersion>
+    <Version>1.0.0.1</Version>
+    <Authors>Hendrik R. Schonlebe</Authors>
+    <Company>UNITY Software Pty. Ltd.</Company>
+    <Product>UNITY Powder Coaters</Product>
+    <Copyright>UNITY Software Pty. Ltd.</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
