@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -13,7 +14,11 @@ namespace UNITYPCoatData
         private const String GET_ERROR = "Record not Found !";
 
         #region Global Variables
-        public SqlConnection PCConnection { get; set; }
+        public String SQLServerName { get; set; } = string.Empty;
+        public String SQLUserName { get; set; } = string.Empty;
+        public String SQLUserPassword { get; set; } = string.Empty;
+        public String SQLDataBaseName { get; set; } = string.Empty;
+        public SqlConnection PCConnection { get; set; } = new SqlConnection();
         public String ErrorMessage { get; set; } = string.Empty;
         #endregion
         #region Common Functions
@@ -489,6 +494,233 @@ namespace UNITYPCoatData
             return isSuccessful;
         }
         #endregion
+        #region Paint Families
+        public Int32 PaintFamilyId { get; set; }
+        public String PaintFamilyDescription { get; set; } = string.Empty;
+        public DataTable PaintFamilyRecord { get; set; } = new DataTable();
+        public DataTable PaintFamilyRecords { get; set; } = new DataTable();
+        public Boolean Create_Paint_Family_Table(SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                String StrSQL = "CREATE TABLE PaintFamily (";
+                StrSQL += "PaintFamilyId bigint IDENTITY(1,1) NOT NULL, ";
+                StrSQL += "PaintFamilyDescription nvarchar(50))";
+
+                SqlCommand cmdCreate = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                cmdCreate.CommandTimeout = 1000000;
+                cmdCreate.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Create Paint Family Table - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Insert_Paint_Family_Record(SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                String StrSQL = "INSERT INTO PaintFamily (";
+                StrSQL += "PaintFamilyDescription) VALUES (";
+                StrSQL += "'" + Fix_Hyphon(PaintFamilyDescription) + "')";
+                SqlCommand cmdInsert = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                if (cmdInsert.ExecuteNonQuery() != 1)
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Insert Paint Family Record - " + INSERT_ERROR + " !";
+                }
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Insert Paint Family Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Get_Paint_Family_Record(Int32 FamilyId)
+        {
+            Boolean isSuccessful;
+
+            ErrorMessage = string.Empty;
+            PaintFamilyRecord.Clear();
+
+            try
+            {
+                String StrSQL = "SELECT * FROM PaintFamily WHERE PaintFamilyId = " + FamilyId.ToString();
+                SqlCommand cmdGet = new SqlCommand(StrSQL, PCConnection);
+                SqlDataReader rdrGet = cmdGet.ExecuteReader();
+                if (rdrGet.HasRows == true)
+                {
+                    PaintFamilyRecord.Load(rdrGet);
+                    isSuccessful = Gather_Paint_Family_Record();
+                }
+                else
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "GetPaint Family Record - " + GET_ERROR + " !";
+                }
+                rdrGet.Close();
+                cmdGet.Dispose();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Get Paint Family Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Get_Paint_Family_Record(Int32 FamilyId, SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful;
+
+            ErrorMessage = string.Empty;
+            PaintFamilyRecord.Clear();
+
+            try
+            {
+                String StrSQL = "SELECT * FROM PaintFamily WHERE PaintFamilyId = " + FamilyId.ToString();
+                SqlCommand cmdGet = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                SqlDataReader rdrGet = cmdGet.ExecuteReader();
+                if (rdrGet.HasRows == true)
+                {
+                    PaintFamilyRecord.Load(rdrGet);
+                    isSuccessful = Gather_Paint_Family_Record();
+                }
+                else
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "GetPaint Family Record - " + GET_ERROR + " !";
+                }
+                rdrGet.Close();
+                cmdGet.Dispose();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Get Paint Family Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        private Boolean Gather_Paint_Family_Record()
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                PaintFamilyId = Convert.ToInt32(PaintFamilyRecord.Rows[0]["PaintFamilyId"]);
+                PaintFamilyDescription = PaintFamilyRecord.Rows[0]["PaintFamilyDescription"].ToString();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Gather Paint Family Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Update_Paint_Family_Record(Int32 FamilyId, SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+            Boolean hasChanged = false;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                String StrSQL = "UPDATE PaintFamily SET ";
+                if (PaintFamilyDescription != PaintFamilyRecord.Rows[0]["PaintFamilyDescription"].ToString())
+                {
+                    StrSQL += "PaintFamilydescription = '" + Fix_Hyphon(PaintFinishDescription) + "' ";
+                    hasChanged = true;
+                }
+
+                if (hasChanged == true)
+                {
+                    StrSQL += "WHERE PaintFamilyId = " + FamilyId.ToString();
+                    SqlCommand cmdUpdate = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                    if (cmdUpdate.ExecuteNonQuery() != 1)
+                    {
+                        isSuccessful = false;
+                        ErrorMessage = "Update Paint Family Record - " + UPDATE_ERROR + " !";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Update Paint Family Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Delete_Paint_Family_Record(Int32 FamilyId, SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                String StrSQL = "DELETE FROM PaintFamily WHERE PaintFamilyId = " + FamilyId.ToString();
+                SqlCommand cmdDelete = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                if (cmdDelete.ExecuteNonQuery() != 1)
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Delete Paint Family Record - " + DELETE_ERROR + " !";
+                }
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "DELETE Paint Family Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Get_Paint_Family_List()
+        {
+            Boolean isSuccessful = true; ;
+
+            ErrorMessage = string.Empty;
+            PaintFamilyRecords.Clear();
+
+            try
+            {
+                String StrSQL = "SELECT * FROM PaintFamily ORDER BY PaintFamilydescription";
+                SqlCommand cmdGet = new SqlCommand(StrSQL, PCConnection);
+                SqlDataReader rdrGet = cmdGet.ExecuteReader();
+                if (rdrGet.HasRows == true)
+                {
+                    PaintFamilyRecords.Load(rdrGet);
+                }
+                rdrGet.Close();
+                cmdGet.Dispose();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Get Paint Family List - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        #endregion
         #region Paint Price Groups
         public Int32 PaintPriceGroupId { get; set; } = -1;
         public String PaintPriceGroupCode { get; set; } = string.Empty;
@@ -757,14 +989,112 @@ namespace UNITYPCoatData
         }
 
         #endregion
+        #region Supplier Product Groups
+        public Int32 SupplierProductGroupId { get; set; }
+        public Int32 SupplierproductGroupSupplierId { get; set; }
+
+
+        #endregion
         #endregion
 
 
         #region Data Base Test
+        public Boolean Connect_To_SQL_Server()
+        {
+            Boolean isSuccessful = true;
+            String StrConnectionString;
 
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                StrConnectionString = "Data Source=" + SQLServerName + ";" + "Initial Catalog=" + SQLDataBaseName + ";Persist Security Info=False;User ID=" + SQLUserName + ";Password=" + SQLUserPassword + ";";
+                PCConnection.ConnectionString = StrConnectionString;
+                PCConnection.Open();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "** Operator **\r\n\r\n" + ex.Message + " !\r\n" + "Connecting to " + SQLServerName + " " + SQLDataBaseName;
+            }
+
+
+            return isSuccessful;
+        }
         #endregion
         #region Data Base Create
+        public Boolean Create_Data_Base()
+        {
+            Boolean isSuccessful;
+            SqlConnection MasterConnection = new SqlConnection();
 
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                // ***** Logon To Master Database
+                MasterConnection.ConnectionString = "Data Source = " + SQLServerName + ";" + "Initial Catalog = master" + ";Persist Security Info=False;User ID=" + SQLUserName + ";Password=" + SQLUserPassword + ";";
+                MasterConnection.Open();
+                // ***** Create New Database
+                SqlCommand cmdCreate = new SqlCommand("CREATE DATABASE " + SQLDataBaseName, MasterConnection);
+                cmdCreate.CommandTimeout = 30000;
+                cmdCreate.ExecuteNonQuery();
+                MasterConnection.Close();
+                // ***** Logon To the New Database
+                Connect_To_SQL_Server();
+                // ***** Create Data Tables
+                isSuccessful = Create_Data_Tables();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "** Operator **\r\n\r\n" + ex.Message + " !\r\n" + "Creating New Data " + SQLDataBaseName + " on " + SQLServerName;
+            }
+
+
+            return isSuccessful;
+        }
+        public Boolean Create_Data_Tables()
+        {
+            Boolean isSuccessful = true;
+            List <String> MyTables = Populate_Tables_List();
+
+            SqlTransaction TrnEnvelope = PCConnection.BeginTransaction();
+
+            foreach(String DBTable in MyTables)
+            {
+                if (DBTable == "ColourGroups")
+                    isSuccessful = Create_Colour_Group_Table(TrnEnvelope);
+                else if (DBTable == "PaintFinishes")
+                    isSuccessful = Create_Paint_Finish_Table(TrnEnvelope);
+                else if (DBTable == "PaintFamily")
+                    isSuccessful = Create_Paint_Family_Table(TrnEnvelope);
+                else if (DBTable == "PaintPriceGroups")
+                    isSuccessful = Create_Paint_PriceGroup_Table(TrnEnvelope);
+
+
+                if (isSuccessful == false)
+                {
+                    TrnEnvelope.Rollback();
+                    break;
+                }
+            }
+
+            if (isSuccessful == true)
+                TrnEnvelope.Commit();
+
+            return isSuccessful;
+        }
+        private List<String> Populate_Tables_List()
+        {
+            List<String> MyTables = new List<String>();
+            MyTables.Add("ColourGroups");
+            MyTables.Add("PaintFinishes");
+            MyTables.Add("PaintFamily");
+            MyTables.Add("PaintPriceGroups");
+
+            return MyTables;
+        }
         #endregion
     }
-}
+} 
