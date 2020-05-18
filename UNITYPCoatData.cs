@@ -1890,7 +1890,7 @@ namespace UNITYPCoatData
             {
                 String StrSQL = "UPDATE PaintTypes SET ";
 
-                if (PaintTypeDescription != PaintFinishRecord.Rows[0]["PaintTypeDescription"].ToString())
+                if (PaintTypeDescription != PaintTypeRecord.Rows[0]["PaintTypeDescription"].ToString())
                 {
                     StrSQL += "PaintTypeDescription = '" + Fix_Hyphon(PaintTypeDescription) + "' ";
                     hasChanged = true;
