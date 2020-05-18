@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 
-
 namespace UNITYPCoatData
 {
     public class UNITYPCoatData
@@ -735,7 +734,7 @@ namespace UNITYPCoatData
 
             try
             {
-                String StrSQL = "SELECT * FROM SupplierPaintSeriesd WHERE PaintSeriesId = " + SeriesId.ToString();
+                String StrSQL = "SELECT * FROM SupplierPaintSeries WHERE PaintSeriesId = " + SeriesId.ToString();
                 SqlCommand cmdGet = new SqlCommand(StrSQL, PCConnection);
                 SqlDataReader rdrGet = cmdGet.ExecuteReader();
                 if (rdrGet.HasRows == true)
@@ -961,8 +960,781 @@ namespace UNITYPCoatData
 
             return isSuccessful;
         }
+        public Boolean Insert_Supplier_Product_Groups_Record(SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
 
+            ErrorMessage = string.Empty;
 
+            try
+            {
+                String StrSQL = "INSERT INTO SupplierProductGroups (";
+                StrSQL += "SupplierproductGroupCode, ";
+                StrSQL += "SupplierProductGroupSupplierId, ";
+                StrSQL += "SupplierproductGroupDescription, ";
+                StrSQL += "SupplierProductGroupPaintTypeId, ";
+                StrSQL += "SupplierProductGroupPaintFamilyId, ";
+                StrSQL += "SupplierProductGroupProcessId, ";
+                StrSQL += "SupplierProductGroupProcessRate, ";
+                StrSQL += "SupplierProductGroupMinimumProcessCharge, ";
+                StrSQL += "SupplierProductGroupMinimumMaterialCharge, ";
+                StrSQL += "SupplierProductGroupUnitSurcharge, ";
+                StrSQL += "SupplierProductGroupCoverage, ";
+                StrSQL += "SupplierProductGroupCoverageFactor, ";
+                StrSQL += "SupplierProductGroupBreakIntervals, ";
+                StrSQL += "SupplierProductGroupIsActive, ";
+                StrSQL += "SupplierProdcutGroupLastUpdated) VALUES (";
+                StrSQL += "'" + Fix_Hyphon(SupplierProductGroupCode) + "', ";
+                StrSQL += SupplierProductGroupSupplierId.ToString() + ", ";
+                StrSQL += "'" + Fix_Hyphon(SupplierProductGroupDescription) + "', ";
+                StrSQL += SupplierProductGroupPaintTypeId.ToString() + ", ";
+                StrSQL += SupplierProductGroupPaintFamilyId.ToString() + ", ";
+                StrSQL += SupplierProductGroupProcessId.ToString() + ", ";
+                StrSQL += SupplierProductGroupProcessRate.ToString() + ", ";
+                StrSQL += SupplierProductGroupMinimumProcessCharge.ToString() + ", ";
+                StrSQL += SupplierProductGroupMinimumMaterialCharge.ToString() + ", ";
+                StrSQL += SupplierProductGroupUnitSurcharge.ToString() + ", ";
+                StrSQL += SupplierProductGroupCoverage.ToString() + ", ";
+                StrSQL += SupplierProductGroupCoverageFactor.ToString() + ", ";
+                StrSQL += SupplierProductGroupVolumeBreakIntervals.ToString() + ", ";
+                StrSQL += "'" + SupplierProductGroupIsActive.ToString() + "', ";
+                StrSQL += "'" + Fix_Hyphon(DateTime.Now.ToString()) + "')";
+                SqlCommand cmdInsert = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                if (cmdInsert.ExecuteNonQuery() != 1)
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Insert Supplier Product Group Record - " + INSERT_ERROR;
+                }
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Insert Supplier Product Group Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Get_Supplier_Product_Groups_Record(Int32 GroupId)
+        {
+            Boolean isSuccessful;
+
+            ErrorMessage = string.Empty;
+            SupplierProductGroupRecord.Clear();
+
+            try
+            {
+                String StrSQL = "SELECT * FROM SupplierProductGroups WHERE SupplierProductGroupId = " + GroupId.ToString();
+                SqlCommand cmdGet = new SqlCommand(StrSQL, PCConnection);
+                SqlDataReader rdrGet = cmdGet.ExecuteReader();
+                if (rdrGet.HasRows == true)
+                {
+                    SupplierProductGroupRecord.Load(rdrGet);
+                    isSuccessful = Gather_Supplier_Product_Groups_Record();
+                }
+                else
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Get Supplier Product Group Record - " + GET_ERROR;
+                }
+                rdrGet.Close();
+                cmdGet.Dispose();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Get Supplier Product Group Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Get_Supplier_Product_Groups_Record(Int32 GroupId, SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful;
+
+            ErrorMessage = string.Empty;
+            SupplierProductGroupRecord.Clear();
+
+            try
+            {
+                String StrSQL = "SELECT * FROM SupplierProductGroups WHERE SupplierProductGroupId = " + GroupId.ToString();
+                SqlCommand cmdGet = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                SqlDataReader rdrGet = cmdGet.ExecuteReader();
+                if (rdrGet.HasRows == true)
+                {
+                    SupplierProductGroupRecord.Load(rdrGet);
+                    isSuccessful = Gather_Supplier_Product_Groups_Record();
+                }
+                else
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Get Supplier Product Group Record - " + GET_ERROR;
+                }
+                rdrGet.Close();
+                cmdGet.Dispose();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Get Supplier Product Group Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Get_Supplier_Product_Groups_Record(String GroupCode)
+        {
+            Boolean isSuccessful;
+
+            ErrorMessage = string.Empty;
+            SupplierProductGroupRecord.Clear();
+
+            try
+            {
+                String StrSQL = "SELECT * FROM SupplierProductGroups WHERE SupplierProductCode = '" + Fix_Hyphon(GroupCode) + "'";
+                SqlCommand cmdGet = new SqlCommand(StrSQL, PCConnection);
+                SqlDataReader rdrGet = cmdGet.ExecuteReader();
+                if (rdrGet.HasRows == true)
+                {
+                    SupplierProductGroupRecord.Load(rdrGet);
+                    isSuccessful = Gather_Supplier_Product_Groups_Record();
+                }
+                else
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Get Supplier Product Group Record - " + GET_ERROR;
+                }
+                rdrGet.Close();
+                cmdGet.Dispose();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Get Supplier Product Group Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        private Boolean Gather_Supplier_Product_Groups_Record()
+        {
+            Boolean isSuccessful = true;
+
+            try
+            {
+                SupplierProductGroupId = Convert.ToInt32(SupplierProductGroupRecord.Rows[0]["SupplierProductGroupId"]);
+                SupplierProductGroupSupplierId = Convert.ToInt32(SupplierProductGroupRecord.Rows[0]["SupplierProductGroupSupplierId"]);
+                SupplierProductGroupCode = SupplierProductGroupRecord.Rows[0]["SupplierProductGroupCode"].ToString();
+                SupplierProductGroupDescription = SupplierProductGroupRecord.Rows[0]["SupplierProductGroupDescription"].ToString();
+                SupplierProductGroupPaintTypeId = Convert.ToInt32(SupplierProductGroupRecord.Rows[0]["SupplierProductGroupPaintTypeId"]);
+                SupplierProductGroupPaintFamilyId = Convert.ToInt32(SupplierProductGroupRecord.Rows[0]["SupplierProductGroupPaintFamilyId"]);
+                SupplierProductGroupProcessId = Convert.ToInt32(SupplierProductGroupRecord.Rows[0]["SupplierProductGroupProcessId"]);
+                SupplierProductGroupProcessRate = Convert.ToDouble(SupplierProductGroupRecord.Rows[0]["SupplierProductGroupProcessRate"]);
+                SupplierProductGroupMinimumProcessCharge = Convert.ToDouble(SupplierProductGroupRecord.Rows[0]["SupplierProductGroupMinimumProcessCharge"]);
+                SupplierProductGroupMinimumMaterialCharge = Convert.ToDouble(SupplierProductGroupRecord.Rows[0]["SupplierProductGroupMinimumMaterialCharge"]);
+                SupplierProductGroupUnitSurcharge = Convert.ToDouble(SupplierProductGroupRecord.Rows[0]["SupplierProductGroupUnitSurcharge"]);
+                SupplierProductGroupCoverage = Convert.ToDouble(SupplierProductGroupRecord.Rows[0]["SupplierProductGroupCoverage"]);
+                SupplierProductGroupCoverageFactor = Convert.ToDouble(SupplierProductGroupRecord.Rows[0]["SupplierProductGroupCoverageFactor"]);
+                SupplierProductGroupVolumeBreakIntervals = Convert.ToInt32(SupplierProductGroupRecord.Rows[0]["SupplierProductGroupVolumeBreakIntervals"]);
+                SupplierProductGroupIsActive = Convert.ToBoolean(SupplierProductGroupRecord.Rows[0]["SupplierProductGroupIsActive"]);
+                SupplierProductGroupLastUpdated = SupplierProductGroupRecord.Rows[0]["SupplierProductGroupLastUpdated"].ToString();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Gather Supplier Product Group Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Update_Supplier_Product_Groups_Record(Int32 GroupId, SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+            Boolean hasChanged = false;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                String StrSQL = "UPDATE SupplierProductGroups SET ";
+
+                if (SupplierProductGroupSupplierId != Convert.ToInt32(SupplierProductGroupRecord.Rows[0]["SupplierProductGroupSupplierId"]))
+                {
+                    StrSQL += "SupplierProductGroupSupplierId = " + SupplierProductGroupSupplierId.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (SupplierProductGroupCode != SupplierProductGroupRecord.Rows[0]["SupplierProductGroupCode"].ToString())
+                {
+                    StrSQL += "SupplierProductGroupCode = '" + Fix_Hyphon(SupplierProductGroupCode) + "', ";
+                    hasChanged = true;
+                }
+                if (SupplierProductGroupDescription != SupplierProductGroupRecord.Rows[0]["SupplierProductGroupDescription"].ToString())
+                {
+                    StrSQL += "SupplierProductGroupDescription = '" + Fix_Hyphon(SupplierProductGroupDescription) + "', ";
+                    hasChanged = true;
+                }
+                if (SupplierProductGroupPaintTypeId != Convert.ToInt32(SupplierProductGroupRecord.Rows[0]["SupplierProductGroupPaintTypeId"]))
+                {
+                    StrSQL += "SupplierProductGroupPaintTypeId = " + SupplierProductGroupPaintTypeId.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (SupplierProductGroupPaintFamilyId != Convert.ToInt32(SupplierProductGroupRecord.Rows[0]["SupplierProductGroupPaintFamilyId"]))
+                {
+                    StrSQL += "SupplierProductGroupPaintFamilyId = " + SupplierProductGroupPaintFamilyId.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (SupplierProductGroupProcessId != Convert.ToInt32(SupplierProductGroupRecord.Rows[0]["SupplierProductGroupProcessId"]))
+                {
+                    StrSQL += "SupplierProductGroupProcessId = " + SupplierProductGroupProcessId.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (SupplierProductGroupProcessRate != Convert.ToDouble(SupplierProductGroupRecord.Rows[0]["SupplierProductGroupProcessRate"]))
+                {
+                    StrSQL += "SupplierProductGroupProcessRate = " + SupplierProductGroupProcessRate.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (SupplierProductGroupMinimumProcessCharge != Convert.ToDouble(SupplierProductGroupRecord.Rows[0]["SupplierProductGroupMinimumProcessCharge"]))
+                {
+                    StrSQL += "SupplierProductGroupMinimumProcessCharge = " + SupplierProductGroupMinimumProcessCharge.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (SupplierProductGroupMinimumMaterialCharge != Convert.ToDouble(SupplierProductGroupRecord.Rows[0]["SupplierProductGroupMinimumMaterialCharge"]))
+                {
+                    StrSQL += "SupplierProductGroupMinimumMaterialCharge = " + SupplierProductGroupMinimumMaterialCharge.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (SupplierProductGroupUnitSurcharge != Convert.ToDouble(SupplierProductGroupRecord.Rows[0]["SupplierProductGroupUnitSurcharge"]))
+                {
+                    StrSQL += "SupplierProductGroupUnitSurcharge = " + SupplierProductGroupUnitSurcharge.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (SupplierProductGroupCoverage != Convert.ToDouble(SupplierProductGroupRecord.Rows[0]["SupplierProductGroupCoverage"]))
+                {
+                    StrSQL += "SupplierProductGroupCoverage = " + SupplierProductGroupCoverage.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (SupplierProductGroupCoverageFactor != Convert.ToDouble(SupplierProductGroupRecord.Rows[0]["SupplierProductGroupCoverageFactor"]))
+                {
+                    StrSQL += "SupplierProductGroupCoverageFactor = " + SupplierProductGroupCoverageFactor.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (SupplierProductGroupVolumeBreakIntervals != Convert.ToInt32(SupplierProductGroupRecord.Rows[0]["SupplierProductGroupVolumeBreakIntervals"]))
+                {
+                    StrSQL += "SupplierProductGroupVolumeBreakIntervals = " + SupplierProductGroupVolumeBreakIntervals.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (SupplierProductGroupIsActive != Convert.ToBoolean(SupplierProductGroupRecord.Rows[0]["SupplierProductGroupIsActive"]))
+                {
+                    StrSQL += "SupplierProductGroupIsActive = '" + SupplierProductGroupIsActive.ToString() + "', ";
+                    hasChanged = true;
+                }
+
+                if (hasChanged == true)
+                {
+                    StrSQL += "SupplierProductGroupLastUpdated = '" + Fix_Hyphon(DateTime.Now.ToString()) + "' WHERE SupplierProductGroupId = " + GroupId.ToString();
+                    SqlCommand cmdUpdate = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                    if (cmdUpdate.ExecuteNonQuery() != 1)
+                    {
+                        isSuccessful = false;
+                        ErrorMessage = "Update Supplier Product Group Record - " + UPDATE_ERROR;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Update Supplier Product Group Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Delete_Supplier_Product_Groups_Record(Int32 GroupId, SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                String StrSQL = "DELETE FROM SupplierProductGroups WHERE SupplierProductGroupId = " + GroupId.ToString();
+                SqlCommand cmdDelete = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                if (cmdDelete.ExecuteNonQuery() != 1)
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Delete Supplier Product Group Record - " + DELETE_ERROR;
+                }
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Delete Supplier Product Group Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Get_Supplier_Product_Groups_List(Int32 SuppId)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+            SupplierProductGroupRecords.Clear();
+
+            try
+            {
+                String StrSQL = "SELECT * FROM SupplierProductGroups WHERE SupplierProductGroupSupplierId = " + SuppId.ToString();
+                SqlCommand cmdGet = new SqlCommand(StrSQL, PCConnection);
+                SqlDataReader rdrGet = cmdGet.ExecuteReader();
+                if (rdrGet.HasRows == true)
+                {
+                    SupplierProductGroupRecords.Load(rdrGet);
+                }
+                rdrGet.Close();
+                cmdGet.Dispose();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Get Supplier Product Group List - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+
+        #endregion
+        #region Supplier Paint Products
+        public Int32 SupplierPaintProductId { get; set; }
+        public Int32 SupplierPaintProductSupplierId { get; set; }
+        public String SupplierPaintProductCode { get; set; } = string.Empty;
+        public String SupplierPaintProductColourName { get; set; } = string.Empty;
+        public Int32 SupplierPaintProductLRV { get; set; }
+        public Int32 SupplierPaintProductRVal { get; set; }
+        public Int32 SupplierPaintProductGVal { get; set; }
+        public Int32 SupplierPaintProductBVal { get; set; }
+        public Int32 SupplierPaintProductFinishTypeId { get; set; }
+        public Int32 SupplierPaintProductSupplierProductGroupId { get; set; }
+        public Int32 SupplierPaintProductSupplierPaintSeriesId { get; set; }
+        public Boolean SupplierPaintProductIsMTO { get; set; } = false;
+        public Boolean SupplierPaintProductIsActive { get; set; } = true;
+        public Boolean SupplierPaintProductIsExternal { get; set; } = false;
+        public Double SupplierPaintProductCoverageFactor { get; set; }
+        public Double SupplierPaintProductStockOnHand { get; set; }
+        public Double SupplierPaintProductStockInProduction { get; set; }
+        public String SupplierPaintProductBarCode { get; set; } = string.Empty;
+        public String SupplierPaintProductLastUpdated { get; set; } = string.Empty;
+        public DataTable SupplierPaintProductRecord { get; set; } = new DataTable();
+        public DataTable SupplierPaintProductRecords { get; set; } = new DataTable();
+        public Boolean Create_Supplier_Paint_Products_Table(SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                String StrSQL = "CREATE TABLE SupplierPaintProducts (";
+                StrSQL += "SupplierPaintProductId bigint IDENTITY(1,1) NOT NULL, ";
+                StrSQL += "SupplierPaintProductSupplierId bigint NOT NULL, ";
+                StrSQL += "SupplierPainProductCode nvarchar(20) UNIQUE NOT NULL, ";
+                StrSQL += "SupplierPaintProductColourName nvarchar(50) NOT NULL, ";
+                StrSQL += "SupplierPaintProductLRV bigint NOT NULL, ";
+                StrSQL += "SupplierPaintProductRVal bigint NOT NULL, ";
+                StrSQL += "SupplierPaintProductGVal bigint NOT NULL, ";
+                StrSQL += "SupplierPaintProductBVal bigint NOT NULL, ";
+                StrSQL += "SupplierPaintProductFinishTypeId bigint NOT NULL, ";
+                StrSQL += "SupplierPaintProductSupplierProductGroupId bigint NOT NULL, ";
+                StrSQL += "SupplierPaintProductSupplierPaintSeriesId bigint NOT NULL, ";
+                StrSQL += "SupplierPaintProductIsMTO bit NOT NULL, ";
+                StrSQL += "SupplierPaintProductIsActive bit NOT NULL, ";
+                StrSQL += "SupplierPaintProductIsExternal bit NOT NULL, ";
+                StrSQL += "SupplierPaintProductCoverageFactor float, ";
+                StrSQL += "SupplierPaintProductStockOnHand float, ";
+                StrSQL += "SupplierPaintProductStockInProduction float, ";
+                StrSQL += "SupplierPaintProductBarCode nvarchar(50), ";
+                StrSQL += "SupplierPaintProductLastUpdated nvarchar(50) NOT NULL)";
+                SqlCommand cmdCreate = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                cmdCreate.CommandTimeout = 1000000;
+                cmdCreate.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Create Supplier Paint Product Table - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Insert_Supplier_Paint_Products_Record(SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                String StrSQL = "INSERT INTO SupplierPaintProducts (";
+                StrSQL += "SupplierPaintProductSupplierId, ";
+                StrSQL += "SupplierPainProductCode, ";
+                StrSQL += "SupplierPaintProductColourName, ";
+                StrSQL += "SupplierPaintProductLRV, ";
+                StrSQL += "SupplierPaintProductRVal, ";
+                StrSQL += "SupplierPaintProductGVal, ";
+                StrSQL += "SupplierPaintProductBVal, ";
+                StrSQL += "SupplierPaintProductFinishTypeId, ";
+                StrSQL += "SupplierPaintProductSupplierProductGroupId, ";
+                StrSQL += "SupplierPaintProductSupplierPaintSeriesId, ";
+                StrSQL += "SupplierPaintProductIsMTO, ";
+                StrSQL += "SupplierPaintProductIsActive, ";
+                StrSQL += "SupplierPaintProductIsExternal, ";
+                StrSQL += "SupplierPaintProductCoverageFactor, ";
+                StrSQL += "SupplierPaintProductStockOnHand, ";
+                StrSQL += "SupplierPaintProductStockInProduction, ";
+                StrSQL += "SupplierPaintProductBarCode, ";
+                StrSQL += "SupplierPaintProductLastUpdated) VALUES (";
+                StrSQL += SupplierPaintProductSupplierId.ToString() + ", ";
+                StrSQL += "'" + Fix_Hyphon(SupplierPaintProductCode) + "', ";
+                StrSQL += "'" + Fix_Hyphon(SupplierPaintProductColourName) + "', ";
+                StrSQL += SupplierPaintProductLRV.ToString() + ", ";
+                StrSQL += SupplierPaintProductRVal.ToString() + ", ";
+                StrSQL += SupplierPaintProductGVal.ToString() + ", ";
+                StrSQL += SupplierPaintProductBVal.ToString() + ", ";
+                StrSQL += SupplierPaintProductFinishTypeId.ToString() + ", ";
+                StrSQL += SupplierPaintProductSupplierProductGroupId.ToString() + ", ";
+                StrSQL += SupplierPaintProductSupplierPaintSeriesId.ToString() + ", ";
+                StrSQL += "'" + SupplierPaintProductIsMTO.ToString() + "', ";
+                StrSQL += "'" + SupplierPaintProductIsActive.ToString() + "', ";
+                StrSQL += "'" + SupplierPaintProductIsExternal.ToString() + "', ";
+                StrSQL += SupplierPaintProductCoverageFactor.ToString() + ", ";
+                StrSQL += SupplierPaintProductStockOnHand.ToString() + ", ";
+                StrSQL += SupplierPaintProductStockInProduction.ToString() + ", ";
+                StrSQL += "'" + Fix_Hyphon(SupplierPaintProductBarCode) + "', ";
+                StrSQL += "'" + Fix_Hyphon(DateTime.Now.ToString()) + "')";
+                SqlCommand cmdInsert = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                if (cmdInsert.ExecuteNonQuery() != 1)
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Insert Supplier Paint Product Record - " + INSERT_ERROR;
+                }
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Insert Supplier Paint Product Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Get_Supplier_Paint_Products_Record(Int32 ProductId)
+        {
+            Boolean isSuccessful;
+
+            ErrorMessage = string.Empty;
+            SupplierPaintProductRecord.Clear();
+
+            try
+            {
+                String StrSQL = "SELECT * FROM SupplierPaintProducts WHERE SupplierPaintProductId = " + ProductId.ToString();
+                SqlCommand cmdGet = new SqlCommand(StrSQL, PCConnection);
+                SqlDataReader rdrGet = cmdGet.ExecuteReader();
+                if (rdrGet.HasRows == true)
+                {
+                    SupplierPaintProductRecord.Load(rdrGet);
+                    isSuccessful = Gather_Supplier_Paint_Products_Record();
+                }
+                else
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Get Supplier Paint Product Record - " + GET_ERROR;
+                }
+                rdrGet.Close();
+                cmdGet.Dispose();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Get Supplier Paint Product Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Get_Supplier_Paint_Products_Record(Int32 ProductId, SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful;
+
+            ErrorMessage = string.Empty;
+            SupplierPaintProductRecord.Clear();
+
+            try
+            {
+                String StrSQL = "SELECT * FROM SupplierPaintProducts WHERE SupplierPaintProductId = " + ProductId.ToString();
+                SqlCommand cmdGet = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                SqlDataReader rdrGet = cmdGet.ExecuteReader();
+                if (rdrGet.HasRows == true)
+                {
+                    SupplierPaintProductRecord.Load(rdrGet);
+                    isSuccessful = Gather_Supplier_Paint_Products_Record();
+                }
+                else
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Get Supplier Paint Product Record - " + GET_ERROR;
+                }
+                rdrGet.Close();
+                cmdGet.Dispose();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Get Supplier Paint Product Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Get_Supplier_Paint_Products_Record(String ProductCode)
+        {
+            Boolean isSuccessful;
+
+            ErrorMessage = string.Empty;
+            SupplierPaintProductRecord.Clear();
+
+            try
+            {
+                String StrSQL = "SELECT * FROM SupplierPaintProducts WHERE SupplierPaintProductCode = '" + Fix_Hyphon(ProductCode) + "'";
+                SqlCommand cmdGet = new SqlCommand(StrSQL, PCConnection);
+                SqlDataReader rdrGet = cmdGet.ExecuteReader();
+                if (rdrGet.HasRows == true)
+                {
+                    SupplierPaintProductRecord.Load(rdrGet);
+                    isSuccessful = Gather_Supplier_Paint_Products_Record();
+                }
+                else
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Get Supplier Paint Product Record - " + GET_ERROR;
+                }
+                rdrGet.Close();
+                cmdGet.Dispose();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Get Supplier Paint Product Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+
+        private Boolean Gather_Supplier_Paint_Products_Record()
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                SupplierPaintProductId = Convert.ToInt32(SupplierPaintProductRecord.Rows[0]["SupplierPaintProductId"]);
+                SupplierPaintProductSupplierId = Convert.ToInt32(SupplierPaintProductRecord.Rows[0]["SupplierPaintProductSupplierId"]);
+                SupplierPaintProductCode = SupplierPaintProductRecord.Rows[0]["SupplierPaintProductCode"].ToString();
+                SupplierPaintProductColourName = SupplierPaintProductRecord.Rows[0]["SupplierPaintProductColourName"].ToString();
+                SupplierPaintProductLRV = Convert.ToInt32(SupplierPaintProductRecord.Rows[0]["SupplierPaintProductLRV"]);
+                SupplierPaintProductRVal = Convert.ToInt32(SupplierPaintProductRecord.Rows[0]["SupplierPaintProductRVal"]);
+                SupplierPaintProductGVal = Convert.ToInt32(SupplierPaintProductRecord.Rows[0]["SupplierPaintProductGVal"]);
+                SupplierPaintProductBVal = Convert.ToInt32(SupplierPaintProductRecord.Rows[0]["SupplierPaintProductBVal"]);
+                SupplierPaintProductFinishTypeId = Convert.ToInt32(SupplierPaintProductRecord.Rows[0]["SupplierPaintProductFinishTypeId"]);
+                SupplierPaintProductSupplierProductGroupId = Convert.ToInt32(SupplierPaintProductRecord.Rows[0]["SupplierPaintProductSupplierProductGroupId"]);
+                SupplierPaintProductSupplierPaintSeriesId = Convert.ToInt32(SupplierPaintProductRecord.Rows[0]["SupplierPaintProductSupplierPaintSeriesId"]);
+                SupplierPaintProductIsMTO = Convert.ToBoolean(SupplierPaintProductRecord.Rows[0]["SupplierPaintProductIsMTO"]);
+                SupplierPaintProductIsActive = Convert.ToBoolean(SupplierPaintProductRecord.Rows[0]["SupplierPaintProductIsActive"]);
+                SupplierPaintProductIsExternal = Convert.ToBoolean(SupplierPaintProductRecord.Rows[0]["SupplierPaintProductIsExternal"]);
+                SupplierPaintProductCoverageFactor = Convert.ToDouble(SupplierPaintProductRecord.Rows[0]["SupplierPaintProductCoverageFactor"]);
+                SupplierPaintProductStockOnHand = Convert.ToDouble(SupplierPaintProductRecord.Rows[0]["SupplierPaintProductStockOnHand"]);
+                SupplierPaintProductStockInProduction = Convert.ToDouble(SupplierPaintProductRecord.Rows[0]["SupplierPaintProductStockInProduction"]);
+                SupplierPaintProductBarCode = SupplierPaintProductRecord.Rows[0]["SupplierPaintProductBarCode"].ToString();
+                SupplierPaintProductLastUpdated = SupplierPaintProductRecord.Rows[0]["SupplierPaintProductLastUpdated"].ToString();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Gather Supplier Paint Product Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Update_Supplier_Paint_Products_Record(Int32 ProductId, SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+            Boolean hasChanged = false;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                String StrSQL = "UPDATE SupplierPaintProducts SET ";
+
+                if (SupplierPaintProductSupplierId != Convert.ToInt32(SupplierPaintProductRecord.Rows[0]["SupplierPaintProductSupplierId"]))
+                {
+                    StrSQL += "SupplierPaintProductSupplierId = " + SupplierPaintProductSupplierId.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (SupplierPaintProductCode != SupplierPaintProductRecord.Rows[0]["SupplierPaintProductCode"].ToString())
+                {
+                    StrSQL += "SupplierPaintProductCode = '" + Fix_Hyphon(SupplierPaintProductCode) + "', ";
+                    hasChanged = true;
+                }
+                if (SupplierPaintProductColourName != SupplierPaintProductRecord.Rows[0]["SupplierPaintProductColourName"].ToString())
+                {
+                    StrSQL += "SupplierPaintProductColourName = '" + Fix_Hyphon(SupplierPaintProductColourName) + "', ";
+                    hasChanged = true;
+                }
+                if (SupplierPaintProductLRV != Convert.ToInt32(SupplierPaintProductRecord.Rows[0]["SupplierPaintProductLRV"]))
+                {
+                    StrSQL += "SupplierPaintProductLRV = " + SupplierPaintProductLRV.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (SupplierPaintProductRVal != Convert.ToInt32(SupplierPaintProductRecord.Rows[0]["SupplierPaintProductRVal"]))
+                {
+                    StrSQL += "SupplierPaintProductRVal = " + SupplierPaintProductRVal.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (SupplierPaintProductGVal != Convert.ToInt32(SupplierPaintProductRecord.Rows[0]["SupplierPaintProductGVal"]))
+                {
+                    StrSQL += "SupplierPaintProductGVal = " + SupplierPaintProductGVal.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (SupplierPaintProductBVal != Convert.ToInt32(SupplierPaintProductRecord.Rows[0]["SupplierPaintProductBVal"]))
+                {
+                    StrSQL += "SupplierPaintProductBVal = " + SupplierPaintProductBVal.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (SupplierPaintProductFinishTypeId != Convert.ToInt32(SupplierPaintProductRecord.Rows[0]["SupplierPaintProductFinishTypeId"]))
+                {
+                    StrSQL += "SupplierPaintProductFinishTypeId = " + SupplierPaintProductFinishTypeId.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (SupplierPaintProductSupplierProductGroupId != Convert.ToInt32(SupplierPaintProductRecord.Rows[0]["SupplierPaintProductSupplierProductGroupId"]))
+                {
+                    StrSQL += "SupplierPaintProductSupplierProductGroupId = " + SupplierPaintProductSupplierProductGroupId.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (SupplierPaintProductSupplierPaintSeriesId != Convert.ToInt32(SupplierPaintProductRecord.Rows[0]["SupplierPaintProductSupplierPaintSeriesId"]))
+                {
+                    StrSQL += "SupplierPaintProductSupplierPaintSeriesId = " + SupplierPaintProductSupplierPaintSeriesId.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (SupplierPaintProductIsMTO != Convert.ToBoolean(SupplierPaintProductRecord.Rows[0]["SupplierPaintProductIsMTO"]))
+                {
+                    StrSQL += "SupplierPaintProductIsMTO = '" + SupplierPaintProductIsMTO.ToString() + "', ";
+                    hasChanged = true;
+                }
+                if (SupplierPaintProductIsActive != Convert.ToBoolean(SupplierPaintProductRecord.Rows[0]["SupplierPaintProductIsActive"]))
+                {
+                    StrSQL += "SupplierPaintProductIsActive = '" + SupplierPaintProductIsActive.ToString() + "', ";
+                    hasChanged = true;
+                }
+                if (SupplierPaintProductIsExternal != Convert.ToBoolean(SupplierPaintProductRecord.Rows[0]["SupplierPaintProductIsExternal"]))
+                {
+                    StrSQL += "SupplierPaintProductIsExternal = '" + SupplierPaintProductIsExternal.ToString() + "', ";
+                    hasChanged = true;
+                }
+                if (SupplierPaintProductCoverageFactor != Convert.ToDouble(SupplierPaintProductRecord.Rows[0]["SupplierPaintProductCoverageFactor"]))
+                {
+                    StrSQL += "SupplierPaintProductCoverageFactor = " + SupplierPaintProductCoverageFactor.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (SupplierPaintProductStockOnHand != Convert.ToDouble(SupplierPaintProductRecord.Rows[0]["SupplierPaintProductStockOnHand"]))
+                {
+                    StrSQL += "SupplierPaintProductStockOnHand = " + SupplierPaintProductStockOnHand.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (SupplierPaintProductStockInProduction != Convert.ToDouble(SupplierPaintProductRecord.Rows[0]["SupplierPaintProductStockInProduction"]))
+                {
+                    StrSQL += "SupplierPaintProductStockInProduction = " + SupplierPaintProductStockInProduction.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (SupplierPaintProductBarCode != SupplierPaintProductRecord.Rows[0]["SupplierPaintProductBarCode"].ToString())
+                {
+                    StrSQL += "SupplierPaintProductBarCode = '" + Fix_Hyphon(SupplierPaintProductBarCode) + "', ";
+                    hasChanged = true;
+                }
+
+                if (hasChanged == true)
+                {
+                    StrSQL += "SupplierPaintProductLastUpdated = '" + Fix_Hyphon(DateTime.Now.ToString()) + "' WHERE SupplierPaintProductId = " + ProductId.ToString();
+                    SqlCommand cmdUpdate = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                    if (cmdUpdate.ExecuteNonQuery() != 1)
+                    {
+                        isSuccessful = false;
+                        ErrorMessage = "Update Supplier Paint Product Record - " + UPDATE_ERROR;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Update Supplier Paint Product Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Delete_Supplier_Paint_Products_Record(Int32 ProductId, SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+            
+            try
+            {
+                String StrSQL = "DELETE FROM SupplierPaintProducts WHERE SupplierPaintProductId = " + ProductId.ToString();
+                SqlCommand cmdDelete = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                if (cmdDelete.ExecuteNonQuery() != 1)
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Delete Supplier Paint Product Record - " + DELETE_ERROR;
+                }
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Delete Supplier Paint Product Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Get_Supplier_Paint_Products_List(Int32 SuppId, Int32 GroupId)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+            SupplierPaintProductRecords.Clear();
+
+            try
+            {
+                String StrSQL = "SELECT * FROM SupplierPaintProducts ";
+                if (SuppId > 0)
+                {
+                    StrSQL += "WHERE SupplierPaintProductSupplierId = " + SuppId.ToString() + " ";
+                    if (GroupId > 0)
+                        StrSQL += "AND SupplierPaintProductSupplierProductGroupId = " + GroupId.ToString() + " ";
+                }
+                else
+                {
+                    if (GroupId > 0)
+                        StrSQL += "WHERE SupplierPaintProductSupplierProductGroupId = " + GroupId.ToString() + " ";
+                }
+                StrSQL += "ORDER BY SupplierPaintProductCode";
+                SqlCommand cmdGet = new SqlCommand(StrSQL, PCConnection);
+                SqlDataReader rdrGet = cmdGet.ExecuteReader();
+                if (rdrGet.HasRows == true)
+                {
+                    SupplierPaintProductRecords.Load(rdrGet);
+                }
+                rdrGet.Close();
+                cmdGet.Dispose();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Get Supplier Paint Product List - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
 
         #endregion
         #endregion
@@ -1096,8 +1868,8 @@ namespace UNITYPCoatData
 
             try
             {
-                PaintTypeId = Convert.ToInt32(PaintFinishRecord.Rows[0]["PaintTypeId"]);
-                PaintTypeDescription = PaintFinishRecord.Rows[0]["PaintTypeDescription"].ToString();
+                PaintTypeId = Convert.ToInt32(PaintTypeRecord.Rows[0]["PaintTypeId"]);
+                PaintTypeDescription = PaintTypeRecord.Rows[0]["PaintTypeDescription"].ToString();
             }
             catch (Exception ex)
             {
@@ -1802,7 +2574,7 @@ namespace UNITYPCoatData
                 String StrSQL = "UPDATE PaintFamily SET ";
                 if (PaintFamilyDescription != PaintFamilyRecord.Rows[0]["PaintFamilyDescription"].ToString())
                 {
-                    StrSQL += "PaintFamilydescription = '" + Fix_Hyphon(PaintFinishDescription) + "' ";
+                    StrSQL += "PaintFamilydescription = '" + Fix_Hyphon(PaintFamilyDescription) + "' ";
                     hasChanged = true;
                 }
 
@@ -2172,11 +2944,255 @@ namespace UNITYPCoatData
         }
 
         #endregion
+        #region Process Rates
+        public Int32 ProcessRateId { get; set; }
+        public String ProcessRateDescription { get; set; } = string.Empty;
+        public Double ProcessRateRate { get; set; }
+        public Double ProcessRateMinimumCharge { get; set; }
+        public DataTable ProcessRateRecord { get; set; } = new DataTable();
+        public DataTable ProcessRateRecords { get; set; } = new DataTable();
+        public Boolean Create_Process_Rates_Table(SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                String StrSQL = "CREATE TABLE ProcessRates (";
+                StrSQL += "ProcessRateId bigint IDENTITY(1,1) NOT NULL, ";
+                StrSQL += "ProcessRateDescription nvarchar(50), ";
+                StrSQL += "ProcessRateRate float, ";
+                StrSQL += "ProcessRateMinimumCharge float)";
+                SqlCommand cmdCreate = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                cmdCreate.CommandTimeout = 1000000;
+                cmdCreate.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Create Process Rates Table - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Insert_Process_Rates_Record(SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                String StrSQL = "INSERT INTO ProcessRates (";
+                StrSQL += "ProcessRateDescription, ";
+                StrSQL += "ProcessRateRate, ";
+                StrSQL += "ProcessRateMinimumCharge) VALUES (";
+                SqlCommand cmdInsert = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                if (cmdInsert.ExecuteNonQuery() != 1)
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Insert Process Rates Record - " + INSERT_ERROR;
+                }
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Insert Process Rates Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Get_Process_Rates_Record(Int32 RateId)
+        {
+            Boolean isSuccessful;
+
+            ErrorMessage = string.Empty;
+            ProcessRateRecord.Clear();
+
+            try
+            {
+                String StrSQL = "SELECT * FROM ProcessRates WHERE ProcessRateId = " + RateId.ToString();
+                SqlCommand cmdGet = new SqlCommand(StrSQL, PCConnection);
+                SqlDataReader rdrGet = cmdGet.ExecuteReader();
+                if (rdrGet.HasRows == true)
+                {
+                    ProcessRateRecord.Load(rdrGet);
+                    isSuccessful = Gather_Process_Rates_Record();
+                }
+                else
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Get Process Rates Record - " + GET_ERROR;
+                }
+                rdrGet.Close();
+                cmdGet.Dispose();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Get Process Rates Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Get_Process_Rates_Record(Int32 RateId, SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful;
+
+            ErrorMessage = string.Empty;
+            ProcessRateRecord.Clear();
+
+            try
+            {
+                String StrSQL = "SELECT * FROM ProcessRates WHERE ProcessRateId = " + RateId.ToString();
+                SqlCommand cmdGet = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                SqlDataReader rdrGet = cmdGet.ExecuteReader();
+                if (rdrGet.HasRows == true)
+                {
+                    ProcessRateRecord.Load(rdrGet);
+                    isSuccessful = Gather_Process_Rates_Record();
+                }
+                else
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Get Process Rates Record - " + GET_ERROR;
+                }
+                rdrGet.Close();
+                cmdGet.Dispose();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Get Process Rates Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        private Boolean Gather_Process_Rates_Record()
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                ProcessRateId = Convert.ToInt32(ProcessRateRecord.Rows[0]["ProcessRateId"]);
+                ProcessRateDescription = ProcessRateRecord.Rows[0]["ProcessRateDescription"].ToString();
+                ProcessRateRate = Convert.ToDouble(ProcessRateRecord.Rows[0]["ProcessRateRate"]);
+                ProcessRateMinimumCharge = Convert.ToDouble(ProcessRateRecord.Rows[0]["ProcessRateMinimumCharge"]);
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Gather Process Rates Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Update_Process_Rates_Record(Int32 RateId, SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+            Boolean hasChanged = false;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                String StrSQL = "UPDATE ProcessRates SET ";
+                if (ProcessRateDescription != ProcessRateRecord.Rows[0]["ProcessRateDescription"].ToString())
+                {
+                    StrSQL += "ProcessRateDescription = '" + Fix_Hyphon(ProcessRateDescription) + "', ";
+                    hasChanged = true;
+                }
+                if (ProcessRateRate != Convert.ToDouble(ProcessRateRecord.Rows[0]["ProcessRateRate"]))
+                {
+                    StrSQL += "ProcessRateRate = " + ProcessRateRate.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (ProcessRateMinimumCharge != Convert.ToDouble(ProcessRateRecord.Rows[0]["ProcessRateMinimumCharge"]))
+                {
+                    StrSQL += "ProcessRateMinimumCharge = " + ProcessRateMinimumCharge.ToString() + ", ";
+                    hasChanged = true;
+                }
+
+                if (hasChanged == true)
+                {
+                    StrSQL = StrSQL.Substring(0, StrSQL.Length - 2) + " WHERE ProcessRateId = " + RateId.ToString();
+                    SqlCommand cmdUpDate = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                    if (cmdUpDate.ExecuteNonQuery() != 1)
+                    {
+                        isSuccessful = false;
+                        ErrorMessage = "Update Process Rates Record - " + UPDATE_ERROR;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Update Process Rates Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Delete_Process_Rates_Record(Int32 RateId, SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                String StrSQL = "DELETE FROM ProcessRates WHERE ProcessRateId = " + RateId.ToString();
+                SqlCommand cmdDelete = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                if (cmdDelete.ExecuteNonQuery() != 1)
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Delete Process Rates Record - " + DELETE_ERROR;
+                }
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Delete Process Rates Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Get_Process_Rates_List()
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+            ProcessRateRecords.Clear();
+
+            try
+            {
+                String StrSQL = "SELECT * FROM ProcessRates ORDER BY ProcessRateDescription";
+                SqlCommand cmdGet = new SqlCommand(StrSQL, PCConnection);
+                SqlDataReader rdrGet = cmdGet.ExecuteReader();
+                if (rdrGet.HasRows == true)
+                {
+                    ProcessRateRecords.Load(rdrGet);
+                }
+                rdrGet.Close();
+                cmdGet.Dispose();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Get Process Rates List - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+
+        #endregion
         #endregion
         #region Part Related Tables
 
         #endregion
-        #region Data Base Test
+        #region Data Base Test / Connection
         public Boolean Connect_To_SQL_Server()
         {
             Boolean isSuccessful = true;
@@ -2241,7 +3257,17 @@ namespace UNITYPCoatData
 
             foreach(String DBTable in MyTables)
             {
-                if (DBTable == "PaintTypes")
+                if (DBTable == "Suppliers")
+                    isSuccessful = Create_Supplier_Table(TrnEnvelope);
+                else if (DBTable == "SupplierContacts")
+                    isSuccessful = Create_Supplier_Contacts_Table(TrnEnvelope);
+                else if (DBTable == "SupplierPaintSeries")
+                    isSuccessful = Create_Paint_Series_Table(TrnEnvelope);
+                else if (DBTable == "SupplierProductGroups")
+                    isSuccessful = Create_Supplier_Product_Groups_Table(TrnEnvelope);
+                else if (DBTable == "SupplierPaintProducts")
+                    isSuccessful = Create_Supplier_Paint_Products_Table(TrnEnvelope);
+                else if (DBTable == "PaintTypes")
                     isSuccessful = Create_Paint_Type_Table(TrnEnvelope);
                 else if (DBTable == "ColourGroups")
                     isSuccessful = Create_Colour_Group_Table(TrnEnvelope);
@@ -2251,6 +3277,8 @@ namespace UNITYPCoatData
                     isSuccessful = Create_Paint_Family_Table(TrnEnvelope);
                 else if (DBTable == "PaintPriceGroups")
                     isSuccessful = Create_Paint_PriceGroup_Table(TrnEnvelope);
+                else if (DBTable == "ProcessRates")
+                    isSuccessful = Create_Process_Rates_Table(TrnEnvelope);
 
 
                 if (isSuccessful == false)
@@ -2268,11 +3296,17 @@ namespace UNITYPCoatData
         private List<String> Populate_Tables_List()
         {
             List<String> MyTables = new List<String>();
+            MyTables.Add("Suppliers");
+            MyTables.Add("SupplierContacts");
+            MyTables.Add("SupplierPaintSeries");
+            MyTables.Add("SupplierProductGroups");
+            MyTables.Add("SupplierPaintProducts");
             MyTables.Add("PaintTypes");
             MyTables.Add("ColourGroups");
             MyTables.Add("PaintFinishes");
             MyTables.Add("PaintFamily");
             MyTables.Add("PaintPriceGroups");
+            MyTables.Add("ProcessRates");
 
             return MyTables;
         }

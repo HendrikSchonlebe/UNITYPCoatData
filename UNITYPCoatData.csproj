@@ -2,13 +2,15 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyVersion>1.0.0.1</AssemblyVersion>
-    <FileVersion>1.0.0.1</FileVersion>
-    <Version>1.0.0.1</Version>
-    <Authors>Hendrik R. Schonlebe</Authors>
+    <AssemblyVersion>1.0.0.3</AssemblyVersion>
+    <FileVersion>1.0.0.3</FileVersion>
+    <Version>1.0.0.3</Version>
+    <Authors>Hendrik R. Schonlebe B.Sc.</Authors>
     <Company>UNITY Software Pty. Ltd.</Company>
     <Product>UNITY Powder Coaters</Product>
     <Copyright>UNITY Software Pty. Ltd.</Copyright>
+    <Description>ERP Data Structures for Powder Coating Business
+</Description>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
