@@ -3190,7 +3190,519 @@ namespace UNITYPCoatData
         #endregion
         #endregion
         #region Part Related Tables
+        #region Part Categories
+        public Int32 PartCategoryId { get; set; }
+        public String PartCategoryCode { get; set; }
+        public String PartCategoryDescription { get; set; }
+        public String PartCategoryAreaStockCalc { get; set; }
+        public String PartCategoryAreaPriceCalc { get; set; }
+        public Boolean PartCategoryIsUnitPart { get; set; }
+        public Double PartCategoryPowderCoverage { get; set; }
+        public Double PartCategoryPaintCoverage { get; set; }
+        public Double PartCategoryPartLoading { get; set; }
+        public String PartCategoryLastUpdate { get; set; }
+        public DataTable PartCategoryRecord { get; set; } = new DataTable();
+        public DataTable PartCategoryRecords { get; set; } = new DataTable();
+        public Boolean Create_PartCategory_Table(SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
 
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                String StrSQL = "CREATE TABLE PartCategories (";
+                StrSQL += "PartCategoryId bigint IDENTITY(1,1) NOT NULL, ";
+                StrSQL += "PartCategoryCode nvarchar(20) NOT NULL, ";
+                StrSQL += "PartCategoryDescription nvarchar(50), ";
+                StrSQL += "PartCategoryAreaStockCalc nvarchar(2000), ";
+                StrSQL += "PartCategoryAreaPriceCalc nvarchar(2000), ";
+                StrSQL += "PartCategoryIsUnitPart bit, ";
+                StrSQL += "PartCategoryPowderCoverage float, ";
+                StrSQL += "PartCategoryPaintCoverage float, ";
+                StrSQL += "PartCategoryPartLoading float, ";
+                StrSQL += "PartCategoryLastUpdate nvarchar(50))";
+                SqlCommand cmdCreate = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                cmdCreate.CommandTimeout = 1000000;
+                cmdCreate.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Create Part Category Table - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Insert_PartCategory_Record(SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                String StrSQL = "INSERT INTO PartCategories (";
+                StrSQL += "PartCategoryCode, ";
+                StrSQL += "PartCategoryDescription, ";
+                StrSQL += "PartCategoryAreaStockCalc, ";
+                StrSQL += "PartCategoryAreaPriceCalc, ";
+                StrSQL += "PartCategoryIsUnitPart, ";
+                StrSQL += "PartCategoryPowderCoverage, ";
+                StrSQL += "PartCategoryPaintCoverage, ";
+                StrSQL += "PartCategoryPartLoading, ";
+                StrSQL += "PartCategoryLastUpdate) VALUES (";
+                StrSQL += "'" + Fix_Hyphon(PartCategoryCode) + "', ";
+                StrSQL += "'" + Fix_Hyphon(PartCategoryDescription) + "', ";
+                StrSQL += "'" + Fix_Hyphon(PartCategoryAreaStockCalc) + "', ";
+                StrSQL += "'" + Fix_Hyphon(PartCategoryAreaPriceCalc) + "', ";
+                StrSQL += "'" + PartCategoryIsUnitPart.ToString() + "', ";
+                StrSQL += PartCategoryPowderCoverage.ToString() + ", ";
+                StrSQL += PartCategoryPaintCoverage.ToString() + ", ";
+                StrSQL += PartCategoryPartLoading.ToString() + ", ";
+                StrSQL += "'" + DateTime.Now.ToString() + "')";
+                SqlCommand cmdInsert = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                if (cmdInsert.ExecuteNonQuery() != 1)
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Insert Part Category Record - " + INSERT_ERROR;
+                }
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Insert Part Category Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Get_PartCategory_Record(Int32 pcId)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+            PartCategoryRecord.Clear();
+
+            try
+            {
+                String StrSQL = "SELECT * FROM PartCategories WHERE PartCategoryId = " + pcId.ToString();
+                SqlCommand cmdGet = new SqlCommand(StrSQL, PCConnection);
+                SqlDataReader rdrGet = cmdGet.ExecuteReader();
+                if (rdrGet.HasRows == true)
+                {
+                    PartCategoryRecord.Load(rdrGet);
+                    isSuccessful = Gather_PartCategory_Record();
+                }
+                else
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Get Part Category Record - " + GET_ERROR;
+                }
+                rdrGet.Close();
+                cmdGet.Dispose();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Get Part Category Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Get_PartCategory_Record(Int32 pcId, SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+            PartCategoryRecord.Clear();
+
+            try
+            {
+                String StrSQL = "SELECT * FROM PartCategories WHERE PartCategoryId = " + pcId.ToString();
+                SqlCommand cmdGet = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                SqlDataReader rdrGet = cmdGet.ExecuteReader();
+                if (rdrGet.HasRows == true)
+                {
+                    PartCategoryRecord.Load(rdrGet);
+                    isSuccessful = Gather_PartCategory_Record();
+                }
+                else
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Get Part Category Record - " + GET_ERROR;
+                }
+                rdrGet.Close();
+                cmdGet.Dispose();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Get Part Category Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Get_PartCategory_Record(String pcCode)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+            PartCategoryRecord.Clear();
+
+            try
+            {
+                String StrSQL = "SELECT * FROM PartCategories WHERE PartCategoryCode = '" + pcCode + "'";
+                SqlCommand cmdGet = new SqlCommand(StrSQL, PCConnection);
+                SqlDataReader rdrGet = cmdGet.ExecuteReader();
+                if (rdrGet.HasRows == true)
+                {
+                    PartCategoryRecord.Load(rdrGet);
+                    isSuccessful = Gather_PartCategory_Record();
+                }
+                else
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Get Part Category Record - " + GET_ERROR;
+                }
+                rdrGet.Close();
+                cmdGet.Dispose();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Get Part Category Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Get_PartCategory_Record(String pcCode, SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+            PartCategoryRecord.Clear();
+
+            try
+            {
+                String StrSQL = "SELECT * FROM PartCategories WHERE PartCategoryCode = '" + pcCode + "'";
+                SqlCommand cmdGet = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                SqlDataReader rdrGet = cmdGet.ExecuteReader();
+                if (rdrGet.HasRows == true)
+                {
+                    PartCategoryRecord.Load(rdrGet);
+                    isSuccessful = Gather_PartCategory_Record();
+                }
+                else
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Get Part Category Record - " + GET_ERROR;
+                }
+                rdrGet.Close();
+                cmdGet.Dispose();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Get Part Category Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Gather_PartCategory_Record()
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                PartCategoryId = Convert.ToInt32(PartCategoryRecord.Rows[0]["PartCatergoryId"]);
+                PartCategoryCode = PartCategoryRecord.Rows[0]["PartCategoryCode"].ToString();
+                PartCategoryDescription = PartCategoryRecord.Rows[0]["PartCategoryDescription"].ToString();
+                PartCategoryAreaStockCalc = PartCategoryRecord.Rows[0]["PartCategoryAreaStockCalc"].ToString();
+                PartCategoryAreaPriceCalc = PartCategoryRecord.Rows[0]["PartCategoryAreaPriceCalc"].ToString();
+                PartCategoryIsUnitPart = Convert.ToBoolean(PartCategoryRecord.Rows[0]["PartCategoryIsUnitPart"]);
+                PartCategoryPowderCoverage = Convert.ToDouble(PartCategoryRecord.Rows[0]["PartCategoryPowderCoverage"]);
+                PartCategoryPaintCoverage = Convert.ToDouble(PartCategoryRecord.Rows[0]["PartCategoryPaintCoverage"]);
+                PartCategoryPartLoading = Convert.ToDouble(PartCategoryRecord.Rows[0]["PartCategoryPartLoading"]);
+                PartCategoryLastUpdate = PartCategoryRecord.Rows[0]["PartCategoryLastUpdate"].ToString();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Gather Part Category Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Update_PartCategory_Record(Int32 pcId, SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+            Boolean hasChanged = false;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                String StrSQL = "UPDATE PartCategories SET ";
+                if (PartCategoryCode != PartCategoryRecord.Rows[0]["PartCategoryCode"].ToString())
+                {
+                    StrSQL += "PartCategoryCode = '" + Fix_Hyphon(PartCategoryCode) + "', ";
+                    hasChanged = true;
+                }
+                if (PartCategoryDescription != PartCategoryRecord.Rows[0]["PartCategoryDescription"].ToString())
+                {
+                    StrSQL += "PartCategoryDescription = '" + Fix_Hyphon(PartCategoryDescription) + "', ";
+                    hasChanged = true;
+                }
+                if (PartCategoryAreaStockCalc != PartCategoryRecord.Rows[0]["PartCategoryAreaStockCalc"].ToString())
+                {
+                    StrSQL += "PartCategoryAreaStockCalc = '" + Fix_Hyphon(PartCategoryAreaStockCalc) + "', ";
+                    hasChanged = true;
+                }
+                if (PartCategoryAreaPriceCalc != PartCategoryRecord.Rows[0]["PartCategoryAreaPriceCalc"].ToString())
+                {
+                    StrSQL += "PartCategoryAreaPriceCalc = '" + Fix_Hyphon(PartCategoryAreaPriceCalc) + "', ";
+                    hasChanged = true;
+                }
+                if (PartCategoryIsUnitPart = Convert.ToBoolean(PartCategoryRecord.Rows[0]["PartCategoryIsUnitPart"]))
+                {
+                    StrSQL += "PartCategoryIsUnitPart = '" + PartCategoryIsUnitPart.ToString() + "', ";
+                    hasChanged = true;
+                }
+                if (PartCategoryPowderCoverage != Convert.ToDouble(PartCategoryRecord.Rows[0]["PartCategoryPowderCoverage"]))
+                {
+                    StrSQL += "PartCategoryPowderCoverage = " + PartCategoryPowderCoverage.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (PartCategoryPaintCoverage != Convert.ToDouble(PartCategoryRecord.Rows[0]["PartCategoryPaintCoverage"]))
+                {
+                    StrSQL += "PartCategoryPaintCoverage = " + PartCategoryPaintCoverage.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (PartCategoryPartLoading != Convert.ToDouble(PartCategoryRecord.Rows[0]["PartCategoryPartLoading"]))
+                {
+                    StrSQL += "PartCategoryPartLoading = " + PartCategoryPartLoading.ToString() + ", ";
+                    hasChanged = true;
+                }
+
+                if (hasChanged == true)
+                {
+                    StrSQL += "PartCategoryLastUpdated = '" + Fix_Hyphon(DateTime.Now.ToString()) + "' WHERE PartCategoryId = " + pcId.ToString();
+                    SqlCommand cmdUpdate = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                    if (cmdUpdate.ExecuteNonQuery() != 1)
+                    {
+                        isSuccessful = false;
+                        ErrorMessage = "Update Part Category Record - " + UPDATE_ERROR;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Update Part Category Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Delete_PartCategory_Record(Int32 pcId, SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                String StrSQL = "DELETE FROM PartCategories WHERE PartCategoryId = " + pcId.ToString();
+                SqlCommand cmdDelete = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                if (cmdDelete.ExecuteNonQuery() != 1)
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Delete Part Category Record - " + DELETE_ERROR;
+                }
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Delete Part Category Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Get_PartCategory_List()
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+            PartCategoryRecords.Clear();
+
+            try
+            {
+                String StrSQL = "SELECT * FROM PartCategoried ORDER BY PartCategoryCode";
+                SqlCommand cmdGet = new SqlCommand(StrSQL, PCConnection);
+                SqlDataReader rdrGet = cmdGet.ExecuteReader();
+                if (rdrGet.HasRows == true)
+                {
+                    PartCategoryRecords.Load(rdrGet);
+                }
+                rdrGet.Close();
+                cmdGet.Dispose();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Get Part Category List - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        #endregion
+        #region Part Pricing Groups
+        public Int32 PartPricingGroupId { get; set; }
+        public String PartPricingGroupDescription { get; set; }
+        public Double PartPricingGroupLoading { get; set; }
+        public DataTable PartPricingGroupRecord { get; set; } = new DataTable();
+        public DataTable PartPricingGroupRecords { get; set; } = new DataTable();
+        public Boolean Create_PartPricingGroups_Table(SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                String StrSQL = "CREATE TABLE PartPricingGroups (";
+                StrSQL += "PartPricingGroupId bigint IDENTITY(1,1) NOT NULL, ";
+                StrSQL += "PartPricingGroupDescription nvarchar(50), ";
+                StrSQL += "PartPricingLoading float)";
+                SqlCommand cmdCreate = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                cmdCreate.CommandTimeout = 1000000;
+                cmdCreate.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Create Part Pricing Group Table - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Insert_PartPricingGroup_Record(SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                String StrSQL = "INSERT INTO PartPricingGroups (";
+                StrSQL += "PartPricingGroupDescription, ";
+                StrSQL += "PartPricingLoading) VALUES (";
+                StrSQL += "'" + Fix_Hyphon(PartPricingGroupDescription) + "', ";
+                StrSQL += PartPricingGroupLoading.ToString() + ")";
+                SqlCommand cmdInsert = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                if (cmdInsert.ExecuteNonQuery() != 1)
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Insert Part Pricing Group Record - " + INSERT_ERROR;
+                }
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Insert Part Pricing Group Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Get_PartPricingGroup_Record(Int32 ppgId)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+            PartPricingGroupRecord.Clear();
+
+            try
+            {
+                String StrSQL = "SELECT * FROM PartPricingGroups WHERE PartPricingGroupId = " + ppgId.ToString();
+                SqlCommand cmdGet = new SqlCommand(StrSQL, PCConnection);
+                SqlDataReader rdrGet = cmdGet.ExecuteReader();
+                if (rdrGet.HasRows == true)
+                {
+                    PartPricingGroupRecord.Load(rdrGet);
+                    isSuccessful = Gather_PartPricingGroup_Record();
+                }
+                else
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Get Part Pricing Group Record - " + GET_ERROR;
+                }
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Get Part Pricing Group Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Get_PartPricingGroup_Record(Int32 ppgId, SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+            PartPricingGroupRecord.Clear();
+
+            try
+            {
+                String StrSQL = "SELECT * FROM PartPricingGroups WHERE PartPricingGroupId = " + ppgId.ToString();
+                SqlCommand cmdGet = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                SqlDataReader rdrGet = cmdGet.ExecuteReader();
+                if (rdrGet.HasRows == true)
+                {
+                    PartPricingGroupRecord.Load(rdrGet);
+                    isSuccessful = Gather_PartPricingGroup_Record();
+                }
+                else
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Get Part Pricing Group Record - " + GET_ERROR;
+                }
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Get Part Pricing Group Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Gather_PartPricingGroup_Record()
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                PartPricingGroupId = Convert.ToInt32(PartPricingGroupRecord.Rows[0]["PartPricingGroupId"]);
+                PartPricingGroupDescription = PartPricingGroupRecord.Rows[0]["PartPricingGroupDescription"].ToString();
+                PartPricingGroupLoading = Convert.ToDouble(PartPricingGroupRecord.Rows[0]["PartPricingGroupLoading"]);
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Gather Part Pricing Group Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+
+
+        #endregion
+        #region Parts
+
+        #endregion
         #endregion
         #region Data Base Test / Connection
         public Boolean Connect_To_SQL_Server()
