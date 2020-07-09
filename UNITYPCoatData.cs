@@ -3199,7 +3199,6 @@ namespace UNITYPCoatData
         public Boolean PartCategoryIsUnitPart { get; set; }
         public Double PartCategoryPowderCoverage { get; set; }
         public Double PartCategoryPaintCoverage { get; set; }
-        public Double PartCategoryPartLoading { get; set; }
         public String PartCategoryLastUpdate { get; set; }
         public DataTable PartCategoryRecord { get; set; } = new DataTable();
         public DataTable PartCategoryRecords { get; set; } = new DataTable();
@@ -3220,7 +3219,6 @@ namespace UNITYPCoatData
                 StrSQL += "PartCategoryIsUnitPart bit, ";
                 StrSQL += "PartCategoryPowderCoverage float, ";
                 StrSQL += "PartCategoryPaintCoverage float, ";
-                StrSQL += "PartCategoryPartLoading float, ";
                 StrSQL += "PartCategoryLastUpdate nvarchar(50))";
                 SqlCommand cmdCreate = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
                 cmdCreate.CommandTimeout = 1000000;
@@ -3250,7 +3248,6 @@ namespace UNITYPCoatData
                 StrSQL += "PartCategoryIsUnitPart, ";
                 StrSQL += "PartCategoryPowderCoverage, ";
                 StrSQL += "PartCategoryPaintCoverage, ";
-                StrSQL += "PartCategoryPartLoading, ";
                 StrSQL += "PartCategoryLastUpdate) VALUES (";
                 StrSQL += "'" + Fix_Hyphon(PartCategoryCode) + "', ";
                 StrSQL += "'" + Fix_Hyphon(PartCategoryDescription) + "', ";
@@ -3259,7 +3256,6 @@ namespace UNITYPCoatData
                 StrSQL += "'" + PartCategoryIsUnitPart.ToString() + "', ";
                 StrSQL += PartCategoryPowderCoverage.ToString() + ", ";
                 StrSQL += PartCategoryPaintCoverage.ToString() + ", ";
-                StrSQL += PartCategoryPartLoading.ToString() + ", ";
                 StrSQL += "'" + DateTime.Now.ToString() + "')";
                 SqlCommand cmdInsert = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
                 if (cmdInsert.ExecuteNonQuery() != 1)
@@ -3424,7 +3420,6 @@ namespace UNITYPCoatData
                 PartCategoryIsUnitPart = Convert.ToBoolean(PartCategoryRecord.Rows[0]["PartCategoryIsUnitPart"]);
                 PartCategoryPowderCoverage = Convert.ToDouble(PartCategoryRecord.Rows[0]["PartCategoryPowderCoverage"]);
                 PartCategoryPaintCoverage = Convert.ToDouble(PartCategoryRecord.Rows[0]["PartCategoryPaintCoverage"]);
-                PartCategoryPartLoading = Convert.ToDouble(PartCategoryRecord.Rows[0]["PartCategoryPartLoading"]);
                 PartCategoryLastUpdate = PartCategoryRecord.Rows[0]["PartCategoryLastUpdate"].ToString();
             }
             catch (Exception ex)
@@ -3478,11 +3473,6 @@ namespace UNITYPCoatData
                 if (PartCategoryPaintCoverage != Convert.ToDouble(PartCategoryRecord.Rows[0]["PartCategoryPaintCoverage"]))
                 {
                     StrSQL += "PartCategoryPaintCoverage = " + PartCategoryPaintCoverage.ToString() + ", ";
-                    hasChanged = true;
-                }
-                if (PartCategoryPartLoading != Convert.ToDouble(PartCategoryRecord.Rows[0]["PartCategoryPartLoading"]))
-                {
-                    StrSQL += "PartCategoryPartLoading = " + PartCategoryPartLoading.ToString() + ", ";
                     hasChanged = true;
                 }
 
@@ -3637,6 +3627,8 @@ namespace UNITYPCoatData
                     isSuccessful = false;
                     ErrorMessage = "Get Part Pricing Group Record - " + GET_ERROR;
                 }
+                rdrGet.Close();
+                cmdGet.Dispose();
             }
             catch (Exception ex)
             {
@@ -3668,6 +3660,8 @@ namespace UNITYPCoatData
                     isSuccessful = false;
                     ErrorMessage = "Get Part Pricing Group Record - " + GET_ERROR;
                 }
+                rdrGet.Close();
+                cmdGet.Dispose();
             }
             catch (Exception ex)
             {
@@ -3697,10 +3691,1109 @@ namespace UNITYPCoatData
 
             return isSuccessful;
         }
+        public Boolean Update_PartPricingGroup_Record(Int32 ppgId, SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+            Boolean hasChanged = false;
 
+            ErrorMessage = string.Empty;
 
+            try
+            {
+                String StrSQL = "UPDATE PartPricingGroups SET ";
+
+                if (PartPricingGroupDescription != PartPricingGroupRecord.Rows[0]["PartPricingGroupDescription"].ToString())
+                {
+                    StrSQL += "PartPricingGroupDescription = '" + Fix_Hyphon(PartPricingGroupDescription) + "', ";
+                    hasChanged = true;
+                }
+                if (PartPricingGroupLoading != Convert.ToDouble(PartPricingGroupRecord.Rows[0]["PartPricingGroupLoading"]))
+                {
+                    StrSQL += "PartPricingGroupLoading = " + PartPricingGroupLoading.ToString() + ", ";
+                    hasChanged = true;
+                }
+
+                if (hasChanged == true)
+                {
+                    StrSQL = StrSQL.Substring(0, StrSQL.Length - 2) + " ";
+                    StrSQL += "WHERE PartPricingGroupId = " + ppgId.ToString();
+                    SqlCommand cmdUpDate = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                    if (cmdUpDate.ExecuteNonQuery() != 1)
+                    {
+                        isSuccessful = false;
+                        ErrorMessage = "Update Part Pricing Group Record - " + UPDATE_ERROR;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Update Part Pricing Group Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Delete_PartPricingGroup_Record(Int32 ppgId, SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                String StrSQL = "DELETE FROM PartPricingGroups WHERE PartPricingGroupId = " + ppgId.ToString();
+                SqlCommand cmdDelete = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                if (cmdDelete.ExecuteNonQuery() != 1)
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Delete Part Pricing Group Record - " + DELETE_ERROR;
+                }
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Delete Part Pricing Group Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Get_PartPricingGroup_List()
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+            PartPricingGroupRecords.Clear();
+
+            try
+            {
+                String StrSQL = "SELECT * FROM PartPricingGroups ORDER BY PartPricingGroupDescription";
+                SqlCommand cmdGet = new SqlCommand(StrSQL, PCConnection);
+                SqlDataReader rdrGet = cmdGet.ExecuteReader();
+                if (rdrGet.HasRows == true)
+                {
+                    PartPricingGroupRecords.Load(rdrGet);
+                }
+                rdrGet.Close();
+                cmdGet.Dispose();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Get Part Pricing Group List - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
         #endregion
         #region Parts
+        public Int32 PartId { get; set; }
+        public String PartCode { get; set; }
+        public Int32 PartPartCategoryId { get; set; }
+        public Int32 PartPartPricingGroupId { get; set; }
+        public Int32 PartCustomerId { get; set; }
+        public String PartDescription { get; set; }
+        public Boolean PartIsGeneric { get; set; } = false;
+        public byte[] PartImage { get; set; } = null;
+        public Double Part_Properties_AP { get; set; }
+        public Double Part_Properties_PP { get; set; }
+        public Double Part_Properties_CP { get; set; }
+        public Double Part_Properties_Length { get; set; }
+        public Double Part_Properties_Height { get; set; }
+        public Double Part_Properties_Width { get; set; }
+        public Double Part_Properties_CurveDepth { get; set; }
+        public Double Part_Properties_Guage { get; set; }
+        public Double Part_Properties_Weight { get; set; }
+        public Double Part_Properties_Multi { get; set; }
+        public Double Part_Properties_Custom1 { get; set; }
+        public Double Part_Properties_Custom2 { get; set; }
+        public Double Part_Properties_Custom3 { get; set; }
+        public Double Part_Properties_Custom4 { get; set; }
+        public Double Part_Properties_Custom5 { get; set; }
+        public Double Part_Properties_UnitArea { get; set; }
+        public Double Part_Properties_AreaFactor { get; set; }
+        public Double PartUnitAreaStock { get; set; }
+        public Double PartUnitAreaPrice { get; set; }
+        public Double PartLoading { get; set; }
+        public Double PartPowderCoverage { get; set; }
+        public Double PartPaintCoverage { get; set; }
+        public String PartLastUpdate { get; set; }
+        public DataTable PartRecord { get; set; } = new DataTable();
+        public DataTable PartRecords { get; set; } = new DataTable();
+        public Boolean Create_Parts_Table(SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                String StrSQL = "CREATE TABLE Parts (";
+                StrSQL += "PartId bigint IDENTITY(1,1) NOT NULL, ";
+                StrSQL += "PartCode nvarchar(20) NOT NULL UNIQUE, ";
+                StrSQL += "PartPartCategoryId bigint NOT NULL, ";
+                StrSQL += "PartPartPricingGroupId bigint NOT NULL, ";
+                StrSQL += "PartCustomerId bigint, ";
+                StrSQL += "PartDescription nvarchar(100), ";
+                StrSQL += "PartIsGeneric bit, ";
+                StrSQL += "PartImage varbinary(max), ";
+                StrSQL += "PartAP float, ";
+                StrSQL += "PartPP float, ";
+                StrSQL += "PartCP float, ";
+                StrSQL += "PartLength float, ";
+                StrSQL += "PartHeight float, ";
+                StrSQL += "PartWidth float, ";
+                StrSQL += "PartCurveDepth float, ";
+                StrSQL += "PartGuage float, ";
+                StrSQL += "PartWeight float, ";
+                StrSQL += "PartMulti float, ";
+                StrSQL += "PartC1 float, ";
+                StrSQL += "PartC2 float, ";
+                StrSQL += "PartC3 float, ";
+                StrSQL += "PartC4 float, ";
+                StrSQL += "PartC5 float, ";
+                StrSQL += "PartUnitArea float, ";
+                StrSQL += "PartAreaFactor float, ";
+                StrSQL += "PartUnitAreaStock float, ";
+                StrSQL += "PartUnitAreaPrice float, ";
+                StrSQL += "PartLoading float, ";
+                StrSQL += "PartPaintCoverage float, ";
+                StrSQL += "PartPowderCoverage float, ";
+                StrSQL += "PartLastUpdate nvarchar(50))";
+                SqlCommand cmdCreate = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                cmdCreate.CommandTimeout = 1000000;
+                cmdCreate.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Create Parts Table - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Insert_Parts_Record(SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                String StrSQL = "INSERT INTO Parts (";
+                StrSQL += "PartCode, ";
+                StrSQL += "PartPartCategoryId, ";
+                StrSQL += "PartPartPricingGroupId, ";
+                StrSQL += "PartCustomerId, ";
+                StrSQL += "PartDescription, ";
+                StrSQL += "PartIsGeneric, ";
+                if (PartImage != null)
+                    StrSQL += "PartImage, ";
+                StrSQL += "PartAP, ";
+                StrSQL += "PartPP, ";
+                StrSQL += "PartCP, ";
+                StrSQL += "PartLength, ";
+                StrSQL += "PartHeight, ";
+                StrSQL += "PartWidth, ";
+                StrSQL += "PartCurveDepth, ";
+                StrSQL += "PartGuage, ";
+                StrSQL += "PartWeight, ";
+                StrSQL += "PartMulti, ";
+                StrSQL += "PartC1, ";
+                StrSQL += "PartC2, ";
+                StrSQL += "PartC3, ";
+                StrSQL += "PartC4, ";
+                StrSQL += "PartC5, ";
+                StrSQL += "PartUnitArea, ";
+                StrSQL += "PartAreaFactor, ";
+                StrSQL += "PartUnitAreaStock, ";
+                StrSQL += "PartUnitAreaPrice, ";
+                StrSQL += "PartLoading, ";
+                StrSQL += "PartPaintCoverage, ";
+                StrSQL += "PartPowderCoverage, ";
+                StrSQL += "PartLastUpdate) VALUES (";
+                StrSQL += "'" + Fix_Hyphon(PartCode) + "', ";
+                StrSQL += PartPartCategoryId.ToString() + ", ";
+                StrSQL += PartPartPricingGroupId.ToString() + ", ";
+                StrSQL += PartCustomerId.ToString() + ", ";
+                StrSQL += "'" + Fix_Hyphon(PartDescription) + "', ";
+                StrSQL += "'" + PartIsGeneric.ToString() + "', ";
+                if (PartImage != null)
+                    StrSQL += "@Pic, ";
+                StrSQL += Part_Properties_AP.ToString() + ", ";
+                StrSQL += Part_Properties_PP.ToString() + ", ";
+                StrSQL += Part_Properties_CP.ToString() + ", ";
+                StrSQL += Part_Properties_Length.ToString() + ", ";
+                StrSQL += Part_Properties_Height.ToString() + ", ";
+                StrSQL += Part_Properties_Width.ToString() + ", ";
+                StrSQL += Part_Properties_CurveDepth.ToString() + ", ";
+                StrSQL += Part_Properties_Guage.ToString() + ", ";
+                StrSQL += Part_Properties_Weight.ToString() + ", ";
+                StrSQL += Part_Properties_Multi.ToString() + ", ";
+                StrSQL += Part_Properties_Custom1.ToString() + ", ";
+                StrSQL += Part_Properties_Custom2.ToString() + ", ";
+                StrSQL += Part_Properties_Custom3.ToString() + ", ";
+                StrSQL += Part_Properties_Custom4.ToString() + ", ";
+                StrSQL += Part_Properties_Custom5.ToString() + ", ";
+                StrSQL += Part_Properties_UnitArea.ToString() + ", ";
+                StrSQL += Part_Properties_AreaFactor.ToString() + ", ";
+                StrSQL += PartUnitAreaStock.ToString() + ", ";
+                StrSQL += PartUnitAreaPrice.ToString() + ", ";
+                StrSQL += PartLoading.ToString() + ", ";
+                StrSQL += PartPaintCoverage.ToString() + ", ";
+                StrSQL += PartPowderCoverage.ToString() + ", ";
+                StrSQL += "'" + DateTime.Now.ToString() + "')";
+                SqlCommand cmdInsert = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                if (PartImage != null)
+                    cmdInsert.Parameters.AddWithValue("@Pic", PartImage);
+                if (cmdInsert.ExecuteNonQuery() != 1)
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Insert Parts Record - " + INSERT_ERROR;
+                }
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Insert Parts Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Get_Parts_Record(Int32 partId)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+            PartRecord.Clear();
+
+            try
+            {
+                String StrSQL = "SELECT * FROM Parts WHERE PartId = " + partId.ToString();
+                SqlCommand cmdGet = new SqlCommand(StrSQL, PCConnection);
+                SqlDataReader rdrGet = cmdGet.ExecuteReader();
+                if (rdrGet.HasRows == true)
+                {
+                    PartRecord.Load(rdrGet);
+                    isSuccessful = Gather_Part_Record();
+                }
+                else
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Get Parts Record - " + GET_ERROR;
+                }
+                rdrGet.Close();
+                cmdGet.Dispose();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Get Parts Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Get_Parts_Record(Int32 partId, SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+            PartRecord.Clear();
+
+            try
+            {
+                String StrSQL = "SELECT * FROM Parts WHERE PartId = " + partId.ToString();
+                SqlCommand cmdGet = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                SqlDataReader rdrGet = cmdGet.ExecuteReader();
+                if (rdrGet.HasRows == true)
+                {
+                    PartRecord.Load(rdrGet);
+                    isSuccessful = Gather_Part_Record();
+                }
+                else
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Get Parts Record - " + GET_ERROR;
+                }
+                rdrGet.Close();
+                cmdGet.Dispose();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Get Parts Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Get_Parts_Record(String partCode)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+            PartRecord.Clear();
+
+            try
+            {
+                String StrSQL = "SELECT * FROM Parts WHERE PartCode = '" + partCode + "'";
+                SqlCommand cmdGet = new SqlCommand(StrSQL, PCConnection);
+                SqlDataReader rdrGet = cmdGet.ExecuteReader();
+                if (rdrGet.HasRows == true)
+                {
+                    PartRecord.Load(rdrGet);
+                    isSuccessful = Gather_Part_Record();
+                }
+                else
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Get Parts Record - " + GET_ERROR;
+                }
+                rdrGet.Close();
+                cmdGet.Dispose();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Get Parts Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Get_Parts_Record(String partCode, SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+            PartRecord.Clear();
+
+            try
+            {
+                String StrSQL = "SELECT * FROM Parts WHERE PartCode = '" + partCode + "'";
+                SqlCommand cmdGet = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                SqlDataReader rdrGet = cmdGet.ExecuteReader();
+                if (rdrGet.HasRows == true)
+                {
+                    PartRecord.Load(rdrGet);
+                    isSuccessful = Gather_Part_Record();
+                }
+                else
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Get Parts Record - " + GET_ERROR;
+                }
+                rdrGet.Close();
+                cmdGet.Dispose();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Get Parts Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Gather_Part_Record()
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                PartId = Convert.ToInt32(PartRecord.Rows[0]["Partid"]);
+                PartCode = PartRecord.Rows[0]["PartCode"].ToString();
+                PartPartCategoryId = Convert.ToInt32(PartRecord.Rows[0]["PartPartCategoryId"]);
+                PartPartPricingGroupId = Convert.ToInt32(PartRecord.Rows[0]["PartPartPricingGroupId"]);
+                PartCustomerId = Convert.ToInt32(PartRecord.Rows[0]["PartCustomerId"]);
+                PartDescription = PartRecord.Rows[0]["PartDescription"].ToString();
+                PartIsGeneric = Convert.ToBoolean(PartRecord.Rows[0]["PartIsGeneric"]);
+
+                //if (PartImage != null)
+                //    StrSQL += "PartImage, ";
+
+                Part_Properties_AP = Convert.ToDouble(PartRecord.Rows[0]["PartAP"]);
+                Part_Properties_PP = Convert.ToDouble(PartRecord.Rows[0]["PartPP"]);
+                Part_Properties_CP = Convert.ToDouble(PartRecord.Rows[0]["PartCP"]);
+                Part_Properties_Length = Convert.ToDouble(PartRecord.Rows[0]["PartLength"]);
+                Part_Properties_Height = Convert.ToDouble(PartRecord.Rows[0]["PartHeight"]);
+                Part_Properties_Width = Convert.ToDouble(PartRecord.Rows[0]["PartWidth"]);
+                Part_Properties_CurveDepth = Convert.ToDouble(PartRecord.Rows[0]["PartCurveDepth"]);
+                Part_Properties_Guage = Convert.ToDouble(PartRecord.Rows[0]["PartGuage"]);
+                Part_Properties_Weight = Convert.ToDouble(PartRecord.Rows[0]["PartWeight"]);
+                Part_Properties_Multi = Convert.ToDouble(PartRecord.Rows[0]["PartMulti"]);
+                Part_Properties_Custom1 = Convert.ToDouble(PartRecord.Rows[0]["PartC1"]);
+                Part_Properties_Custom2 = Convert.ToDouble(PartRecord.Rows[0]["PartC2"]);
+                Part_Properties_Custom3 = Convert.ToDouble(PartRecord.Rows[0]["PartC3"]);
+                Part_Properties_Custom4 = Convert.ToDouble(PartRecord.Rows[0]["PartC4"]);
+                Part_Properties_Custom5 = Convert.ToDouble(PartRecord.Rows[0]["PartC5"]);
+                Part_Properties_UnitArea = Convert.ToDouble(PartRecord.Rows[0]["PartUnitArea"]);
+                Part_Properties_AreaFactor = Convert.ToDouble(PartRecord.Rows[0]["PartAreaFactor"]);
+                PartUnitAreaStock = Convert.ToDouble(PartRecord.Rows[0]["PartUnitAreaStock"]);
+                PartUnitAreaPrice = Convert.ToDouble(PartRecord.Rows[0]["PartUnitAreaPrice"]);
+                PartLoading = Convert.ToDouble(PartRecord.Rows[0]["PartLoading"]);
+                PartPaintCoverage = Convert.ToDouble(PartRecord.Rows[0]["PartPaintCoverage"]);
+                PartPowderCoverage = Convert.ToDouble(PartRecord.Rows[0]["PartPowderCoverage"]);
+                PartLastUpdate = PartRecord.Rows[0]["PartLastUpdate"].ToString();
+
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Gather Parts Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Update_Part_Record(Int32 partId, SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+            Boolean hasChanged = false;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                String StrSQL = "UPDATE Parts SET ";
+
+                if (PartCode != PartRecord.Rows[0]["PartCode"].ToString())
+                {
+                    StrSQL += "PartCode = '" + Fix_Hyphon(PartCode) + "', ";
+                    hasChanged = true;
+                }
+                if (PartPartCategoryId != Convert.ToInt32(PartRecord.Rows[0]["PartPartCategoryId"]))
+                {
+                    StrSQL += "PartPartCategoryId = " + PartPartCategoryId.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (PartPartPricingGroupId != Convert.ToInt32(PartRecord.Rows[0]["PartPartPricingGroupId"]))
+                {
+                    StrSQL += "PartPartPricingGroupId = " + PartPartPricingGroupId.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (PartCustomerId != Convert.ToInt32(PartRecord.Rows[0]["PartCustomerId"]))
+                {
+                    StrSQL += "PartCustomerId = " + PartCustomerId.ToString() + ", ";
+                    hasChanged = true;
+                }
+
+                if (PartDescription != PartRecord.Rows[0]["PartDescription"].ToString())
+                {
+                    StrSQL += "PartDescription = '" + Fix_Hyphon(PartDescription) + "', ";
+                    hasChanged = true;
+                }
+                if (PartIsGeneric = Convert.ToBoolean(PartRecord.Rows[0]["PartIsGeneric"]))
+                {
+                    StrSQL += "PartIsGeneric = '" + PartIsGeneric.ToString() + "', ";
+                    hasChanged = true;
+                }
+
+                //if (PartImage != null)
+                //    StrSQL += "PartImage, ";
+
+                if (Part_Properties_AP != Convert.ToDouble(PartRecord.Rows[0]["PartAP"]))
+                {
+                    StrSQL += "PartAP = " + Part_Properties_AP.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (Part_Properties_PP != Convert.ToDouble(PartRecord.Rows[0]["PartPP"]))
+                {
+                    StrSQL += "PartPP = " + Part_Properties_PP.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (Part_Properties_CP != Convert.ToDouble(PartRecord.Rows[0]["PartCP"]))
+                {
+                    StrSQL += "PartCP = " + Part_Properties_CP.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (Part_Properties_Length != Convert.ToDouble(PartRecord.Rows[0]["PartLength"]))
+                {
+                    StrSQL += "PartLength = " + Part_Properties_Length.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (Part_Properties_Height != Convert.ToDouble(PartRecord.Rows[0]["PartHeight"]))
+                {
+                    StrSQL += "PartHeight = " + Part_Properties_Height.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (Part_Properties_Width != Convert.ToDouble(PartRecord.Rows[0]["PartWidth"]))
+                {
+                    StrSQL += "PartWidth = " + Part_Properties_Width.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (Part_Properties_CurveDepth != Convert.ToDouble(PartRecord.Rows[0]["PartCurveDepth"]))
+                {
+                    StrSQL += "PartCurveDepth = " + Part_Properties_CurveDepth.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (Part_Properties_Guage != Convert.ToDouble(PartRecord.Rows[0]["PartGuage"]))
+                {
+                    StrSQL += "PartGuage = " + Part_Properties_Guage.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (Part_Properties_Weight != Convert.ToDouble(PartRecord.Rows[0]["PartWeight"]))
+                {
+                    StrSQL += "PartWeight = " + Part_Properties_Weight.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (Part_Properties_Multi != Convert.ToDouble(PartRecord.Rows[0]["PartMulti"]))
+                {
+                    StrSQL += "PartMulti = " + Part_Properties_Multi.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (Part_Properties_Custom1 != Convert.ToDouble(PartRecord.Rows[0]["PartC1"]))
+                {
+                    StrSQL += "PartC1 = " + Part_Properties_Custom1.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (Part_Properties_Custom2 != Convert.ToDouble(PartRecord.Rows[0]["PartC2"]))
+                {
+                    StrSQL += "PartC2 = " + Part_Properties_Custom2.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (Part_Properties_Custom3 != Convert.ToDouble(PartRecord.Rows[0]["PartC3"]))
+                {
+                    StrSQL += "PartC3 = " + Part_Properties_Custom3.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (Part_Properties_Custom4 != Convert.ToDouble(PartRecord.Rows[0]["PartC4"]))
+                {
+                    StrSQL += "PartC4 = " + Part_Properties_Custom4.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (Part_Properties_Custom5 != Convert.ToDouble(PartRecord.Rows[0]["PartC5"]))
+                {
+                    StrSQL += "PartC5 = " + Part_Properties_Custom5.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (Part_Properties_UnitArea != Convert.ToDouble(PartRecord.Rows[0]["PartUnitArea"]))
+                {
+                    StrSQL += "PartUnitArea = " + Part_Properties_UnitArea.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (Part_Properties_AreaFactor != Convert.ToDouble(PartRecord.Rows[0]["PartAreaFactor"]))
+                {
+                    StrSQL += "PartAreaFactor = " + Part_Properties_AreaFactor.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (PartUnitAreaStock != Convert.ToDouble(PartRecord.Rows[0]["PartUnitAreaStock"]))
+                {
+                    StrSQL += "PartUnitAreaStock = " + PartUnitAreaStock.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (PartUnitAreaPrice != Convert.ToDouble(PartRecord.Rows[0]["PartUnitAreaPrice"]))
+                {
+                    StrSQL += "PartUnitAreaPrice = " + PartUnitAreaPrice.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (PartLoading != Convert.ToDouble(PartRecord.Rows[0]["PartLoading"]))
+                {
+                    StrSQL += "PartLoading = " + PartLoading.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (PartPaintCoverage != Convert.ToDouble(PartRecord.Rows[0]["PartPaintCoverage"]))
+                {
+                    StrSQL += "PartPaintCoverage = " + PartPaintCoverage.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (PartPowderCoverage != Convert.ToDouble(PartRecord.Rows[0]["PartPowderCoverage"]))
+                {
+                    StrSQL += "PartPowderCoverage = " + PartPowderCoverage.ToString() + ", ";
+                    hasChanged = true;
+                }
+
+                if (hasChanged == true)
+                {
+                    StrSQL += "PartLastUpdate = '" + Fix_Hyphon(DateTime.Now.ToString()) + "' WHERE PartId = " + partId.ToString();
+                    SqlCommand cmdUpdate = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                    if (cmdUpdate.ExecuteNonQuery() != 1)
+                    {
+                        isSuccessful = false;
+                        ErrorMessage = "Update Parts Record - " + UPDATE_ERROR;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Update Parts Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+
+        }
+        public Boolean Delete_Part_Record(Int32 partId, SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                String StrSQL = "DELETE FROM Parts WHERE PartId = " + partId.ToString();
+                SqlCommand cmdDelete = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                if (cmdDelete.ExecuteNonQuery() != 1)
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Delete Parts Record - " + DELETE_ERROR;
+                }
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Delete Parts Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Get_Parts_List()
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+            PartRecords.Clear();
+
+            try
+            {
+                String StrSQL = "SELECT * FROM Parts ORDER BY PartCode";
+                SqlCommand cmdGet = new SqlCommand(StrSQL, PCConnection);
+                SqlDataReader rdrGet = cmdGet.ExecuteReader();
+                if (rdrGet.HasRows == true)
+                {
+                    PartRecords.Load(rdrGet);
+                }
+                rdrGet.Close();
+                cmdGet.Dispose();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Get List of Parts - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        #endregion
+        #endregion
+        #region Paint System Tables
+        #region Paint System
+        public Int32 PaintSystemId { get; set; }
+        public String PaintSystemCode { get; set; }
+        public String PaintSystemDescription { get; set; }
+        public Int32 PaintSystemWarrantyYears { get; set; } = 0;
+        public Int32 PaintSystemCoats { get; set; } = 1;
+        public Double PaintSystemSurcharge { get; set; }
+        public String PaintSystemLastUpdate { get; set; }
+        public DataTable PaintSystemRecord { get; set; } = new DataTable();
+        public DataTable PaintSystemRecords { get; set; } = new DataTable();
+        public Boolean Create_PaintSystems_Table(SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                String StrSQL = "CREATE TABLE PaintSystems (";
+                StrSQL += "PaintSystemId bigint IDENTITY(1,1) NOT NULL, ";
+                StrSQL += "PaintSystemyCode nvarchar(20) NOT NULL, ";
+                StrSQL += "PaintSystemDescription nvarchar(100), ";
+                StrSQL += "PaintSystemWarranty bigint, ";
+                StrSQL += "PaintSystemCoats bigint, ";
+                StrSQL += "PaintSystemSurcharge float, ";
+                StrSQL += "PaintSystemLastUpdate nvarchar(50))";
+                SqlCommand cmdCreate = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                cmdCreate.CommandTimeout = 1000000;
+                cmdCreate.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Create Paint System Table - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Insert_PaintSystem_Record(SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                String StrSQL = "INSERT INTO PaintSystems (";
+                StrSQL += "PaintSystemyCode, ";
+                StrSQL += "PaintSystemDescription, ";
+                StrSQL += "PaintSystemWarranty, ";
+                StrSQL += "PaintSystemCoats, ";
+                StrSQL += "PaintSystemSurcharge, ";
+                StrSQL += "PaintSystemLastUpdate) VALUES (";
+                StrSQL += "'" + Fix_Hyphon(PaintSystemCode) + "', ";
+                StrSQL += "'" + Fix_Hyphon(PaintSystemDescription) + "', ";
+                StrSQL += PaintSystemWarrantyYears.ToString() + ", ";
+                StrSQL += PaintSystemCoats.ToString() + ", ";
+                StrSQL += PaintSystemSurcharge.ToString() + ", ";
+                StrSQL += "'" + Fix_Hyphon(DateTime.Now.ToString()) + "')";
+                SqlCommand cmdInsert = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                if (cmdInsert.ExecuteNonQuery() != 1)
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Insert Paint System Record - " + INSERT_ERROR;
+                }
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Insert Paint System Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Get_PaintSystem_Record(Int32 psId)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+            PaintSystemRecord.Clear();
+
+            try
+            {
+                String StrSQL = "SELECT * FROM PaintSystems WHERE PaintSystemId = " + psId.ToString();
+                SqlCommand cmdGet = new SqlCommand(StrSQL, PCConnection);
+                SqlDataReader rdrGet = cmdGet.ExecuteReader();
+                if (rdrGet.HasRows == true)
+                {
+                    PaintSystemRecord.Load(rdrGet);
+                    isSuccessful = Gather_PaintSystem_Record();
+                }
+                else
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Get Paint System Record - " + GET_ERROR;
+                }
+                rdrGet.Close();
+                cmdGet.Dispose();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Get Paint System Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Get_PaintSystem_Record(Int32 psId, SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+            PaintSystemRecord.Clear();
+
+            try
+            {
+                String StrSQL = "SELECT * FROM PaintSystems WHERE PaintSystemId = " + psId.ToString();
+                SqlCommand cmdGet = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                SqlDataReader rdrGet = cmdGet.ExecuteReader();
+                if (rdrGet.HasRows == true)
+                {
+                    PaintSystemRecord.Load(rdrGet);
+                    isSuccessful = Gather_PaintSystem_Record();
+                }
+                else
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Get Paint System Record - " + GET_ERROR;
+                }
+                rdrGet.Close();
+                cmdGet.Dispose();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Get Paint System Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Get_PaintSystem_Record(String psCode)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+            PaintSystemRecord.Clear();
+
+            try
+            {
+                String StrSQL = "SELECT * FROM PaintSystems WHERE PaintSystemCode = '" + Fix_Hyphon(psCode) + "'";
+                SqlCommand cmdGet = new SqlCommand(StrSQL, PCConnection);
+                SqlDataReader rdrGet = cmdGet.ExecuteReader();
+                if (rdrGet.HasRows == true)
+                {
+                    PaintSystemRecord.Load(rdrGet);
+                    isSuccessful = Gather_PaintSystem_Record();
+                }
+                else
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Get Paint System Record - " + GET_ERROR;
+                }
+                rdrGet.Close();
+                cmdGet.Dispose();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Get Paint System Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Get_PaintSystem_Record(String psCode, SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+            PaintSystemRecord.Clear();
+
+            try
+            {
+                String StrSQL = "SELECT * FROM PaintSystems WHERE PaintSystemCode = '" + Fix_Hyphon(psCode) + "'";
+                SqlCommand cmdGet = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                SqlDataReader rdrGet = cmdGet.ExecuteReader();
+                if (rdrGet.HasRows == true)
+                {
+                    PaintSystemRecord.Load(rdrGet);
+                    isSuccessful = Gather_PaintSystem_Record();
+                }
+                else
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Get Paint System Record - " + GET_ERROR;
+                }
+                rdrGet.Close();
+                cmdGet.Dispose();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Get Paint System Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Gather_PaintSystem_Record()
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                PaintSystemId = Convert.ToInt32(PaintSystemRecord.Rows[0]["PaintSystemId"]);
+                PaintSystemCode = PaintSystemRecord.Rows[0]["PaintSystemCode"].ToString();
+                PaintSystemDescription = PaintSystemRecord.Rows[0]["PaintSystemDescription"].ToString();
+                PaintSystemWarrantyYears = Convert.ToInt32(PaintSystemStepRecord.Rows[0]["PaintSystemWarranty"]);
+                PaintSystemStepCoats = Convert.ToInt32(PaintSystemRecord.Rows[0]["PaintSystemCoats"]);
+                PaintSystemSurcharge = Convert.ToDouble(PaintSystemRecord.Rows[0]["PaintSystemSurcharge"]);
+                PaintSystemLastUpdate = PaintSystemRecord.Rows[0]["PaintSystemLastUpdate"].ToString();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Gather Paint System Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Update_PaintSystem_Record(Int32 psId, SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+            Boolean hasChanged = false;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                String StrSQL = "UPDATE PaintSystems SET ";
+
+                if (PaintSystemCode != PaintSystemRecord.Rows[0]["PaintSystemCode"].ToString())
+                {
+                    StrSQL += "PaintSystemCode = '" + Fix_Hyphon(PaintSystemCode) + "', ";
+                    hasChanged = true;
+                }
+                if (PaintSystemDescription != PaintSystemRecord.Rows[0]["PaintSystemDescription"].ToString())
+                {
+                    StrSQL += "PaintSystemDescription = '" + Fix_Hyphon(PaintSystemDescription) + "', ";
+                    hasChanged = true;
+                }
+                if (PaintSystemWarrantyYears != Convert.ToInt32(PaintSystemStepRecord.Rows[0]["PaintSystemWarranty"]))
+                {
+                    StrSQL += "PaintSystemWarranty = " + PaintSystemWarrantyYears.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (PaintSystemStepCoats != Convert.ToInt32(PaintSystemRecord.Rows[0]["PaintSystemCoats"]))
+                {
+                    StrSQL += "PaintSystemCoats = " + PaintSystemCoats.ToString() + ", ";
+                    hasChanged = true;
+                }
+                if (PaintSystemSurcharge != Convert.ToDouble(PaintSystemRecord.Rows[0]["PaintSystemSurcharge"]))
+                {
+                    StrSQL += "PaintSystemSurcharge = " + PaintSystemSurcharge.ToString() + ", ";
+                    hasChanged = true;
+                }
+
+                if (hasChanged == true)
+                {
+                    StrSQL += "PaintSystemLastUpdate = '" + Fix_Hyphon(DateTime.Now.ToString()) + "' WHERE PaintSystemId = " + psId.ToString();
+                    SqlCommand cmdUpdate = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                    if (cmdUpdate.ExecuteNonQuery() != 1)
+                    {
+                        isSuccessful = false;
+                        ErrorMessage = "Update Paint System Record - " + UPDATE_ERROR;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Update Paint System Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Delete_PaintSystem_Record(Int32 psId, SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                String StrSQL = "DELETE FROM PaintSystems WHERE PaintSystemId = " + psId.ToString();
+                SqlCommand cmdDelete = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                if (cmdDelete.ExecuteNonQuery() != 1)
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Delete Paint System Record - " + DELETE_ERROR;
+                }
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Delete Paint System Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Get_PaintSystem_List()
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+            PaintSystemRecords.Clear();
+
+            try
+            {
+                String StrSQL = "SELECT * FROM PaintSystems ORDER BY PaintSystemCode";
+                SqlCommand cmdGet = new SqlCommand(StrSQL, PCConnection);
+                SqlDataReader rdrGet = cmdGet.ExecuteReader();
+                if (rdrGet.HasRows == true)
+                {
+                    PaintSystemRecords.Load(rdrGet);
+                }
+                rdrGet.Close();
+                cmdGet.Dispose();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Get List of Paint Systems - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        #endregion
+        #region Paint System Steps
+        public Int32 PaintSystemStepId { get; set; }
+        public Int32 PaintSystemStepPaintSystemId { get; set; }
+        public Int32 PaintSystemStepProcessSequence { get; set; }
+        public String PaintSystemStepProcessDescription { get; set; }
+        public String PaintSystemStepCustomerDescription { get; set; }
+        public Int32 PaintSystemStepCoats { get; set; }
+        public Int32 PaintSystemStepProcessRateId { get; set; }
+        public Int32 PaintSystemStepPaintProductGroupId { get; set; }
+        public Boolean PaintSystemStepIsSelectedProduct { get; set; }
+        public DataTable PaintSystemStepRecord { get; set; } = new DataTable();
+        public DataTable PaintSystemStepRecords { get; set; } = new DataTable();
+        public Boolean Create_PaintSystemSteps_Table(SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                String StrSQL = "CREATE TABLE PaintSystemSteps (";
+                StrSQL += "PaintSystemStepId bigint IDENTITY(1,1) NOT NULL, ";
+                StrSQL += "PaintSystemyStepPaintSystemId bigint NOT NULL, ";
+                StrSQL += "PaintSystemStepSequence bigint NOT NULL, ";
+                StrSQL += "PaintSystemStepProcessDescription nvarchar(100), ";
+                StrSQL += "PaintSystemStepCustomerDescription nvarchar(100), ";
+                StrSQL += "PaintSystemStepCoats bigint, ";
+                StrSQL += "PaintSystemStepProcessRateId bigint, ";
+                StrSQL += "PaintSystemStepPaintProductGroupId bigint, ";
+                StrSQL += "PaintSystemStepIsSelectedproduct bit)";
+                SqlCommand cmdCreate = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                cmdCreate.CommandTimeout = 1000000;
+                cmdCreate.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Create Paint System Steps Table - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Insert_PaintSystemStep_Record(SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                String StrSQL = "INSERT INTO PaintSystemSteps (";
+                StrSQL += "PaintSystemyStepPaintSystemId, ";
+                StrSQL += "PaintSystemStepSequence, ";
+                StrSQL += "PaintSystemStepProcessDescription, ";
+                StrSQL += "PaintSystemStepCustomerDescription, ";
+                StrSQL += "PaintSystemStepCoats, ";
+                StrSQL += "PaintSystemStepProcessRateId, ";
+                StrSQL += "PaintSystemStepPaintProductGroupId, ";
+                StrSQL += "PaintSystemStepIsSelectedproduct) VALUES (";
+                StrSQL += PaintSystemStepPaintSystemId.ToString() + ", ";
+                StrSQL += PaintSystemStepProcessSequence.ToString() + ", ";
+                StrSQL += "'" + Fix_Hyphon(PaintSystemStepProcessDescription) + "', ";
+                StrSQL += "'" + Fix_Hyphon(PaintSystemStepCustomerDescription) + "', ";
+                StrSQL += PaintSystemStepCoats.ToString() + ", ";
+                StrSQL += PaintSystemStepProcessRateId.ToString() + ", ";
+                StrSQL += PaintSystemStepPaintProductGroupId.ToString() + ", ";
+                StrSQL += "'" + PaintSystemStepIsSelectedProduct.ToString() + "')";
+                SqlCommand cmdInsert = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                if (cmdInsert.ExecuteNonQuery() != 1)
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Insert Paint System Step Record - " + INSERT_ERROR;
+                }
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Insert Paint System Step Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
 
         #endregion
         #endregion
@@ -3791,6 +4884,16 @@ namespace UNITYPCoatData
                     isSuccessful = Create_Paint_PriceGroup_Table(TrnEnvelope);
                 else if (DBTable == "ProcessRates")
                     isSuccessful = Create_Process_Rates_Table(TrnEnvelope);
+                else if (DBTable == "PartCategories")
+                    isSuccessful = Create_PartCategory_Table(TrnEnvelope);
+                else if (DBTable == "PartPricingGroups")
+                    isSuccessful = Create_PartPricingGroups_Table(TrnEnvelope);
+                else if (DBTable == "Parts")
+                    isSuccessful = Create_Parts_Table(TrnEnvelope);
+                else if (DBTable == "PaintSystems")
+                    isSuccessful = Create_PaintSystems_Table(TrnEnvelope);
+                else if (DBTable == "PaintSystemSteps")
+                    isSuccessful = Create_PaintSystemSteps_Table(TrnEnvelope);
 
 
                 if (isSuccessful == false)
@@ -3819,6 +4922,11 @@ namespace UNITYPCoatData
             MyTables.Add("PaintFamily");
             MyTables.Add("PaintPriceGroups");
             MyTables.Add("ProcessRates");
+            MyTables.Add("PartCategories");
+            MyTables.Add("PartPricingGroups");
+            MyTables.Add("Parts");
+            MyTables.Add("PaintSystems");
+            MyTables.Add("PaintSystemSteps");
 
             return MyTables;
         }
