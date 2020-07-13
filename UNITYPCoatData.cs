@@ -37,6 +37,149 @@ namespace UNITYPCoatData
             return strOut;
         }
         #endregion
+        #region System Parameters
+        public Double Param_GST_Rate { get; set; } = 10.00;
+        public Int32 Param_NextInvoiceNumber { get; set; }
+        public Int32 Param_NextDeliveryDocket { get; set; }
+        public Int32 Param_NextCreditNoteNumber { get; set; }
+        public Int32 Param_NextQuoteNumber { get; set; }
+        public String Param_QuotePrefix { get; set; } = "Q";
+        public Int32 Param_QuoteValidtiyDays { get; set; } 
+        public Int32 Param_NextWorkOrderNumber { get; set; }
+        public String Param_WorkOrderPrefix { get; set; } = "W";
+        public Int32 Param_NextJobNumber { get; set; }
+        public String Param_JobPrefix { get; set; } = "J";
+        public String Param_ReportTemplates_Path { get; set; }
+        public String Param_InvoiceTemplate { get; set; }
+        public String Param_CreditNoteTemplate { get; set; }
+        public String Param_QuoteTemplate { get; set; }
+        public String Param_JobCardTemplate { get; set; }
+        public String Param_TandCPath { get; set; }
+        public String Param_TandCFile { get; set; }
+        public String Param_QuoteWordTemplatePath { get; set; }
+        public String Param_QuoteWordTemplateFile { get; set; }
+        public String Param_QuoteWordTemplateFileSaveType { get; set; }
+        public String Param_QuoteArchivePath { get; set; }
+        public String Param_WorkOrderArchivePath { get; set; }
+        public String Param_SMTPServer { get; set; }
+        public Int32 Param_SMTPPort { get; set; }
+        public String Param_SMTPUserName { get; set; }
+        public String Param_SMTPPassword { get; set; }
+        public String Param_SalesEmailAddress { get; set; }
+        public String Param_CustomerServiceEmailAddress { get; set; }
+        public String Param_ProductionEmailAddress { get; set; }
+        public String Param_PurchasesEmailAddress { get; set; }
+        public DateTime Param_Factory_Start { get; set; }
+        public DateTime Param_Factory_Lunch_Start { get; set; }
+        public DateTime Param_Factory_Lunch_End { get; set; }
+        public DateTime Param_Factory_Finish { get; set; }
+        public DataTable Param_Record { get; set; } = new DataTable();
+        public Boolean Create_Paramater_Table(SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                String StrSQL = "CREATE TABLE Paramters (";
+                StrSQL += "GSTRate float, ";
+                StrSQL += "NEXTInvoiceNumber bigint, ";
+                StrSQL += "NEXTCreditNoteNumber bigint, ";
+                StrSQL += "NEXTDeliveryDocketNumber bigint, ";
+                StrSQL += "NEXTQuoteNumber bigint, ";
+                StrSQL += "NEXTWorkOrderNumber bigint, ";
+                StrSQL += "NEXTJobNumber bigint, ";
+                StrSQL += "QuotePrefix char(3), ";
+                StrSQL += "WorkOrderPrefix char(3), ";
+                StrSQL += "JobPrefix char(3), ";
+                StrSQL += "QuoteTemplateName nvarchar(50), ";
+                StrSQL += "WorkOrderTemplateName nvarchar(50), ";
+                StrSQL += "JobCardTemplateName nvarchar(50), ";
+
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Create Parameter Table - " + ex.Message + "!";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Populate_Paramater_Table(SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Populate Parameter Table - " + ex.Message + "!";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Get_Paramater_Table()
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Get Parameter Table - " + ex.Message + "!";
+            }
+
+            return isSuccessful;
+        }
+
+        public Boolean Gather_Paramater_Table()
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Gather Parameter Table - " + ex.Message + "!";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Update_Paramater_Table(SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Update Parameter Table - " + ex.Message + "!";
+            }
+
+            return isSuccessful;
+        }
+        #endregion
         #region Supplier Related Tables
         #region Supplier Table
         public Int32 SupplierId { get; set; }
@@ -4770,7 +4913,7 @@ namespace UNITYPCoatData
                 StrSQL += "PaintSystemStepCoats, ";
                 StrSQL += "PaintSystemStepProcessRateId, ";
                 StrSQL += "PaintSystemStepPaintProductGroupId, ";
-                StrSQL += "PaintSystemStepIsSelectedproduct) VALUES (";
+                StrSQL += "PaintSystemStepIsSelectedProduct) VALUES (";
                 StrSQL += PaintSystemStepPaintSystemId.ToString() + ", ";
                 StrSQL += PaintSystemStepProcessSequence.ToString() + ", ";
                 StrSQL += "'" + Fix_Hyphon(PaintSystemStepProcessDescription) + "', ";
@@ -4790,6 +4933,151 @@ namespace UNITYPCoatData
             {
                 isSuccessful = false;
                 ErrorMessage = "Insert Paint System Step Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Get_PaintSystemStep_Record(Int32 pssId)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+            PaintSystemStepRecord.Clear();
+
+            try
+            {
+                String StrSQL = "SELECT * FROM PaintSystemSteps WHERE PaintSystemStepId = " + pssId.ToString();
+                SqlCommand cmdGet = new SqlCommand(StrSQL, PCConnection);
+                SqlDataReader rdrGet = cmdGet.ExecuteReader();
+                if (rdrGet.HasRows == true)
+                {
+                    PaintSystemStepRecord.Load(rdrGet);
+                    isSuccessful = Gather_PaintSystemStep_Record();
+                }
+                else
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Get Paint System Step Record - " + GET_ERROR;
+                }
+                rdrGet.Close();
+                cmdGet.Dispose();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Get Paint System Step Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Get_PaintSystemStep_Record(Int32 pssId, SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+            PaintSystemStepRecord.Clear();
+
+            try
+            {
+                String StrSQL = "SELECT * FROM PaintSystemSteps WHERE PaintSystemStepId = " + pssId.ToString();
+                SqlCommand cmdGet = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                SqlDataReader rdrGet = cmdGet.ExecuteReader();
+                if (rdrGet.HasRows == true)
+                {
+                    PaintSystemStepRecord.Load(rdrGet);
+                    isSuccessful = Gather_PaintSystemStep_Record();
+                }
+                else
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Get Paint System Step Record - " + GET_ERROR;
+                }
+                rdrGet.Close();
+                cmdGet.Dispose();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Get Paint System Step Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Gather_PaintSystemStep_Record()
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                PaintSystemStepId = Convert.ToInt32(PaintSystemStepRecord.Rows[0]["PaintSystemStepId"]);
+                PaintSystemStepPaintSystemId = Convert.ToInt32(PaintSystemStepRecord.Rows[0]["PaintSystemStepPaintSystemId"]);
+                PaintSystemStepProcessSequence = Convert.ToInt32(PaintSystemStepRecord.Rows[0]["PaintSystemStepSequence"]);
+                PaintSystemStepProcessDescription = PaintSystemStepRecord.Rows[0]["PaintSystemStepProcessDescription"].ToString();
+                PaintSystemStepCustomerDescription = PaintSystemStepRecord.Rows[0]["PaintSystemStepCustomerDescription"].ToString();
+                PaintSystemStepCoats = Convert.ToInt32(PaintSystemStepRecord.Rows[0]["PaintSystemStepCoats"]);
+                PaintSystemStepProcessRateId = Convert.ToInt32(PaintSystemStepRecord.Rows[0]["PaintSystemStepProcessRateId"]);
+                PaintSystemStepPaintProductGroupId = Convert.ToInt32(PaintSystemStepRecord.Rows[0]["PaintSystemStepPaintProductGroupId"]);
+                PaintSystemStepProcessSequence = Convert.ToInt32(PaintSystemStepRecord.Rows[0]["PaintSystemStepSequence"]);
+                PaintSystemStepIsSelectedProduct = Convert.ToBoolean(PaintSystemStepRecord.Rows[0]["PaintSystemStepIsSelectedProduct"]);
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Gather Paint System Step Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Delete_PaintSystemStep_Record(Int32 pssId, SqlTransaction TrnEnvelope)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                String StrSQL = "DELETE FROM PaintSystemSteps WHERE PaintSystemStepId = " + pssId.ToString();
+                SqlCommand cmdDelete = new SqlCommand(StrSQL, PCConnection, TrnEnvelope);
+                if (cmdDelete.ExecuteNonQuery() != 1)
+                {
+                    isSuccessful = false;
+                    ErrorMessage = "Delete Paint System Step Record - " + DELETE_ERROR;
+                }
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Delete Paint System Step Record - " + ex.Message + " !";
+            }
+
+            return isSuccessful;
+        }
+        public Boolean Get_PaintSystemStep_List(Int32 psId)
+        {
+            Boolean isSuccessful = true;
+
+            ErrorMessage = string.Empty;
+            PaintSystemStepRecords.Clear();
+
+            try
+            {
+                String StrSQL = "SELECT * FROM PaintSystemSteps WHERE PaintSystemStepPaintSystemId = " + psId.ToString();
+                SqlCommand cmdGet = new SqlCommand(StrSQL, PCConnection);
+                SqlDataReader rdrGet = cmdGet.ExecuteReader();
+                if (rdrGet.HasRows == true)
+                {
+                    PaintSystemStepRecords.Load(rdrGet);
+                }
+                else
+                rdrGet.Close();
+                cmdGet.Dispose();
+            }
+            catch (Exception ex)
+            {
+                isSuccessful = false;
+                ErrorMessage = "Get Paint System Step List - " + ex.Message + " !";
             }
 
             return isSuccessful;

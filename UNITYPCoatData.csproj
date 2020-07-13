@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyVersion>1.0.0.6</AssemblyVersion>
-    <FileVersion>1.0.0.5</FileVersion>
-    <Version>1.0.0.5</Version>
+    <AssemblyVersion>1.0.0.7</AssemblyVersion>
+    <FileVersion>1.0.0.7</FileVersion>
+    <Version>1.0.0.7</Version>
     <Authors>Hendrik R. Schonlebe B.Sc.</Authors>
     <Company>UNITY Software Pty. Ltd.</Company>
     <Product>UNITY Powder Coaters</Product>
